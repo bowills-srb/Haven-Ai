@@ -638,6 +638,7 @@ export default function App() {
                       borderRadius: 20,
                       padding: "8px 14px",
                       fontSize: 15,
+                      color: "#000",
                       fontFamily: "-apple-system,sans-serif",
                       outline: "none",
                     }}
