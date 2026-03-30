@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 512,
+      max_tokens: 1024,
       system: systemPrompt,
       messages,
     });
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
         .join(" ")
         .trim() || "Sorry, I couldn't process that. Please try again.";
 
+    console.log("Haven response:", text.slice(0, 200));
     return NextResponse.json({ text });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";

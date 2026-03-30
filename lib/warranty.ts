@@ -157,7 +157,11 @@ export function parseTicket(text: string): { clean: string; ticket: WarrantyTick
   if (!text.includes("---TICKET---")) return { clean: text, ticket: null };
   const [clean, rest] = text.split("---TICKET---");
   try {
-    const jsonStr = rest.trim().split("\n")[0].trim();
+    // Extract JSON robustly — handles single-line or multi-line output
+    const start = rest.indexOf("{");
+    const end = rest.lastIndexOf("}");
+    if (start === -1 || end === -1) return { clean: clean.trim(), ticket: null };
+    const jsonStr = rest.slice(start, end + 1);
     const data = JSON.parse(jsonStr);
     return {
       clean: clean.trim(),
