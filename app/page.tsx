@@ -290,6 +290,11 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
               >
                 {t.actionStatus.eventCreated ? "✓" : "✗"} Calendar → {fmtDate(t.serviceDate)} 9–11 AM
               </div>
+              {t.actionStatus.error && (
+                <div style={{ fontSize: 10, color: "#ff6b6b", fontFamily: "monospace", marginTop: 6, wordBreak: "break-all" }}>
+                  ⚠ {t.actionStatus.error}
+                </div>
+              )}
             </div>
           ) : null}
         </div>
