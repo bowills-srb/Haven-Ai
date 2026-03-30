@@ -93,7 +93,7 @@ export const SASSER = {
 };
 
 export const BUILDER_EMAIL = "haventestblue@gmail.com";
-export const MANUFACTURER_EMAIL = "sassertest@proton.me";
+export const MANUFACTURER_EMAIL = "haventestblue@gmail.com";
 export const BLUEHAVEN_CC = "haventestblue@gmail.com";
 
 export function getServiceDate(): string {
@@ -186,7 +186,7 @@ export function buildEmailContent(ticket: WarrantyTicket): { subject: string; bo
     } catch { return s; }
   };
 
-  const subject = `[${ticket.id}] ${isBuilder ? "Builder" : "Manufacturer"} Warranty — ${ticket.customerName} — ${ticket.equipment}`;
+  const subject = `[${ticket.id}] ${isBuilder ? "🟢 BUILDER WARRANTY – Blue Haven Action Required" : "🟠 MANUFACTURER WARRANTY – Sasser Electric Referral"} | ${ticket.customerName} · ${ticket.equipment}`;
 
   const body = [
     "WARRANTY SERVICE TICKET",
