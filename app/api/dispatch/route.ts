@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { buildEmailContent, WarrantyTicket, BUILDER_EMAIL, MANUFACTURER_EMAIL } from "@/lib/warranty";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   try {
     const ticket: WarrantyTicket = await req.json();
@@ -19,8 +21,13 @@ export async function POST(req: NextRequest) {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: { user: gmailUser, pass: gmailPass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
 
     const toEmail = ticket.route === "builder" ? BUILDER_EMAIL : MANUFACTURER_EMAIL;
@@ -33,6 +40,7 @@ export async function POST(req: NextRequest) {
       text: body,
     });
 
+    console.log(`Email sent: ${ticket.id} → ${toEmail}`);
     return NextResponse.json({ emailSent: true, eventCreated: false });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
