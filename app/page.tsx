@@ -401,15 +401,6 @@ export default function App() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono&family=Barlow:wght@400;500;600&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        @keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: #1e3040; border-radius: 2px; }
-      `}</style>
-
       <div
         style={{
           minHeight: "100vh",
