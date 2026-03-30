@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { buildEmailContent, WarrantyTicket, BUILDER_EMAIL, MANUFACTURER_EMAIL } from "@/lib/warranty";
 
 export const maxDuration = 30;
@@ -12,34 +12,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "ticket data required" }, { status: 400 });
     }
 
-    const gmailUser = process.env.GMAIL_USER;
-    const gmailPass = process.env.GMAIL_APP_PASSWORD;
-
-    if (!gmailUser || !gmailPass) {
-      console.error("Missing GMAIL_USER or GMAIL_APP_PASSWORD env vars");
+    const resendKey = process.env.RESEND_API_KEY;
+    if (!resendKey) {
+      console.error("Missing RESEND_API_KEY env var");
       return NextResponse.json({ emailSent: false, eventCreated: false, error: "Email not configured" }, { status: 500 });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: gmailUser, pass: gmailPass },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
-    });
-
+    const resend = new Resend(resendKey);
     const toEmail = ticket.route === "builder" ? BUILDER_EMAIL : MANUFACTURER_EMAIL;
     const { subject, body } = buildEmailContent(ticket);
 
-    await transporter.sendMail({
-      from: `"Haven AI · Blue Haven Pools" <${gmailUser}>`,
+    const { error } = await resend.emails.send({
+      from: "Haven AI <onboarding@resend.dev>",
       to: toEmail,
       subject,
       text: body,
     });
+
+    if (error) {
+      console.error("Resend error:", error);
+      return NextResponse.json({ emailSent: false, eventCreated: false, error: error.message }, { status: 500 });
+    }
 
     console.log(`Email sent: ${ticket.id} → ${toEmail}`);
     return NextResponse.json({ emailSent: true, eventCreated: false });
