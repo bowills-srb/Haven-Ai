@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildDispatchPrompt, WarrantyTicket } from "@/lib/warranty";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export async function POST(req: NextRequest) {
   try {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: "ANTHROPIC_API_KEY is not set" }, { status: 500 });
+    }
+    const client = new Anthropic({ apiKey });
+
     const ticket: WarrantyTicket = await req.json();
 
     if (!ticket || !ticket.id) {

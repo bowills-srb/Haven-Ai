@@ -92,7 +92,8 @@ export const SASSER = {
   email: "service@sasserelectric.com",
 };
 
-export const DISPATCH_EMAIL = "BluehavenWarranty@gmail.com";
+export const BUILDER_EMAIL = "haventestblue@gmail.com";
+export const MANUFACTURER_EMAIL = "sassertest@proton.me";
 
 export function getServiceDate(): string {
   const d = new Date();
@@ -169,6 +170,7 @@ export function parseTicket(text: string): { clean: string; ticket: WarrantyTick
 
 export function buildDispatchPrompt(ticket: WarrantyTicket): string {
   const isBuilder = ticket.route === "builder";
+  const dispatchEmail = isBuilder ? BUILDER_EMAIL : MANUFACTURER_EMAIL;
   const fmt = (d: Date) =>
     d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const fmtDate = (s: string) => {
@@ -222,7 +224,7 @@ export function buildDispatchPrompt(ticket: WarrantyTicket): string {
 
   return (
     "Complete both tasks using your tools:\n\n" +
-    `TASK 1 - Send email to ${DISPATCH_EMAIL}\nSubject: ${subject}\nBody:\n${emailBody}\n\n` +
+    `TASK 1 - Send email to ${dispatchEmail}\nSubject: ${subject}\nBody:\n${emailBody}\n\n` +
     `TASK 2 - Create calendar event:\nTitle: ${ticket.id} — ${ticket.customerName} Pool Service\n` +
     `Date: ${ticket.serviceDate}\nTime: 9:00 AM–11:00 AM\nLocation: ${ticket.customerAddress}\nDescription: ${eventDesc}\n\n` +
     'Reply with JSON only: {"emailSent":true,"eventCreated":true}'

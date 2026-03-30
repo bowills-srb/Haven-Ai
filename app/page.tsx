@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
-import { POOL_DB, MANUFACTURERS, SASSER, DISPATCH_EMAIL, parseTicket, WarrantyTicket } from "@/lib/warranty";
+import { POOL_DB, MANUFACTURERS, SASSER, BUILDER_EMAIL, MANUFACTURER_EMAIL, parseTicket, WarrantyTicket } from "@/lib/warranty";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -279,7 +279,7 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
                   marginBottom: 3,
                 }}
               >
-                {t.actionStatus.emailSent ? "✓" : "✗"} Email → {DISPATCH_EMAIL}
+                {t.actionStatus.emailSent ? "✓" : "✗"} Email → {t.route === "builder" ? BUILDER_EMAIL : MANUFACTURER_EMAIL}
               </div>
               <div
                 style={{
@@ -771,10 +771,17 @@ export default function App() {
               >
                 Auto-Dispatch To
               </div>
-              <div
-                style={{ fontSize: 12, color: "#00e5c4", fontFamily: "'DM Mono',monospace", marginBottom: 3 }}
-              >
-                ✉️ {DISPATCH_EMAIL}
+              <div style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>
+                BUILDER ≤60d
+              </div>
+              <div style={{ fontSize: 12, color: "#00e5c4", fontFamily: "'DM Mono',monospace", marginBottom: 8 }}>
+                ✉️ {BUILDER_EMAIL}
+              </div>
+              <div style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>
+                MANUFACTURER &gt;60d
+              </div>
+              <div style={{ fontSize: 12, color: "#ff8c42", fontFamily: "'DM Mono',monospace", marginBottom: 8 }}>
+                ✉️ {MANUFACTURER_EMAIL}
               </div>
               <div style={{ fontSize: 12, color: "#00e5c4", fontFamily: "'DM Mono',monospace" }}>
                 📅 Google Calendar · 9–11 AM next business day
