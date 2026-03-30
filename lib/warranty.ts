@@ -168,65 +168,53 @@ export function parseTicket(text: string): { clean: string; ticket: WarrantyTick
   }
 }
 
-export function buildDispatchPrompt(ticket: WarrantyTicket): string {
+export function buildEmailContent(ticket: WarrantyTicket): { subject: string; body: string } {
   const isBuilder = ticket.route === "builder";
-  const dispatchEmail = isBuilder ? BUILDER_EMAIL : MANUFACTURER_EMAIL;
   const fmt = (d: Date) =>
     d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const fmtDate = (s: string) => {
     try {
       return new Date(s + "T12:00:00").toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
+        weekday: "long", month: "long", day: "numeric", year: "numeric",
       });
-    } catch {
-      return s;
-    }
+    } catch { return s; }
   };
 
-  const subject =
-    `[${ticket.id}] ${isBuilder ? "Builder" : "Manufacturer"} Warranty — ${ticket.customerName} — ${ticket.equipment}`;
+  const subject = `[${ticket.id}] ${isBuilder ? "Builder" : "Manufacturer"} Warranty — ${ticket.customerName} — ${ticket.equipment}`;
 
-  const emailBody = [
+  const body = [
     "WARRANTY SERVICE TICKET",
+    "=".repeat(40),
     "",
-    `Ticket: ${ticket.id}`,
-    `Created: ${fmt(ticket.createdAt)}`,
-    `Type: ${ticket.warrantyType}`,
+    `Ticket ID:     ${ticket.id}`,
+    `Created:       ${fmt(new Date(ticket.createdAt))}`,
+    `Warranty Type: ${ticket.warrantyType}`,
     "",
     "CUSTOMER",
-    `Name: ${ticket.customerName}`,
+    "-".repeat(40),
+    `Name:    ${ticket.customerName}`,
     `Address: ${ticket.customerAddress}`,
-    `Phone: ${ticket.customerPhone || "N/A"}`,
+    `Phone:   ${ticket.customerPhone || "N/A"}`,
     "",
     "SERVICE DETAILS",
-    `Equipment: ${ticket.equipment} (${ticket.brand})`,
-    `Issue: ${ticket.issueDescription}`,
-    `Pool Start Date: ${ticket.startDate} (${ticket.daysSinceStart} days ago)`,
+    "-".repeat(40),
+    `Equipment:  ${ticket.equipment} (${ticket.brand})`,
+    `Issue:      ${ticket.issueDescription}`,
+    `Pool Start: ${ticket.startDate} (${ticket.daysSinceStart} days ago)`,
     "",
     "ROUTING",
-    `Assigned To: ${ticket.techAssigned}`,
-    `Tech Phone: ${ticket.techPhone}`,
-    `Scheduled: ${fmtDate(ticket.serviceDate)}`,
+    "-".repeat(40),
+    `Assigned To:  ${ticket.techAssigned}`,
+    `Tech Phone:   ${ticket.techPhone}`,
+    `Service Date: ${fmtDate(ticket.serviceDate)}`,
     "",
     isBuilder
-      ? "Blue Haven will contact customer within 24 hours."
-      : `Customer referred to Sasser Electric at ${SASSER.phone}.`,
+      ? "Blue Haven will contact the customer within 24 hours to confirm the service appointment."
+      : `Customer has been referred to Sasser Electric & Pool Service at ${SASSER.phone}.`,
     "",
-    "---",
+    "=".repeat(40),
     "Sent by Haven AI · Blue Haven Pools Warranty System",
   ].join("\n");
 
-  const eventDesc =
-    `Ticket: ${ticket.id}\nCustomer: ${ticket.customerName} ${ticket.customerPhone || ""}\n` +
-    `Issue: ${ticket.issueDescription}\nEquipment: ${ticket.equipment} (${ticket.brand})\nType: ${ticket.warrantyType}`;
-
-  return (
-    "Complete both tasks using your tools:\n\n" +
-    `TASK 1 - Send email to ${dispatchEmail}\nSubject: ${subject}\nBody:\n${emailBody}\n\n` +
-    `TASK 2 - Create calendar event:\nTitle: ${ticket.id} — ${ticket.customerName} Pool Service\n` +
-    `Date: ${ticket.serviceDate}\nTime: 9:00 AM–11:00 AM\nLocation: ${ticket.customerAddress}\nDescription: ${eventDesc}\n\n` +
-    'Reply with JSON only: {"emailSent":true,"eventCreated":true}'
-  );
+  return { subject, body };
 }
