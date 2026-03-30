@@ -93,7 +93,7 @@ export const SASSER = {
 };
 
 export const BUILDER_EMAIL = "haventestblue@gmail.com";
-export const MANUFACTURER_EMAIL = "sassertest@proton.me";
+export const MANUFACTURER_EMAIL = "haventestblue@gmail.com";
 
 export function getServiceDate(): string {
   const d = new Date();
