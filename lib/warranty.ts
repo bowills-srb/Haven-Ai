@@ -122,12 +122,13 @@ export function buildSystemPrompt(): string {
     "STEP 3: Ask what's happening with it — one sentence description of the problem. " +
     "STEP 4: Ask when they first noticed it. " +
     "STEP 5: Apply warranty routing. Tell them what happens next (Builder: 'We'll have a tech out within 24 hours' / Manufacturer: 'We'll connect you with Sasser Electric'). Ask 'Does that work for you?' " +
-    "STEP 6: On confirmation, finalize ticket. " +
-    "\n\nFINALIZE: Append ---TICKET--- on a new line then a single-line JSON: " +
-    "{route,customerName,customerAddress,customerPhone,equipment,brand,issueDescription,daysSinceStart,startDate,techAssigned,techPhone,warrantyType,serviceDate}. " +
-    "Builder: techAssigned=Blue Haven Service Team, techPhone=(480) 555-0100. " +
-    "Manufacturer: techAssigned=Sasser Electric, techPhone=" + SASSER.phone + ". " +
-    "serviceDate=" + getServiceDate() + ". Append once only, never repeat."
+    "STEP 6: Customer confirms. Write your 1-2 sentence closing message. Then on a NEW LINE write exactly ---TICKET--- and immediately after on the same line write the JSON object. THIS IS MANDATORY — you must always append the ticket when the customer confirms, every single time without exception. " +
+    "\n\nFINALIZE FORMAT (mandatory on customer confirmation): " +
+    "Your closing message here.\n---TICKET---\n{\"route\":\"builder\",\"customerName\":\"...\", ...all fields...}\n\n" +
+    "JSON fields required: route (\"builder\" or \"manufacturer\"), customerName, customerAddress, customerPhone, equipment, brand, issueDescription, daysSinceStart, startDate, techAssigned, techPhone, warrantyType, serviceDate. " +
+    "Builder: techAssigned=\"Blue Haven Service Team\", techPhone=\"(480) 555-0100\". " +
+    "Manufacturer: techAssigned=\"Sasser Electric\", techPhone=\"" + SASSER.phone + "\". " +
+    "serviceDate=" + getServiceDate() + ". Write the full JSON on one line. Append once only, never repeat."
   );
 }
 
