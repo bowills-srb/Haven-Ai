@@ -96,6 +96,174 @@ export const BUILDER_EMAIL = "haventestblue@gmail.com";
 export const MANUFACTURER_EMAIL = "haventestblue@gmail.com";
 export const BLUEHAVEN_CC = "haventestblue@gmail.com";
 
+// ── Service number: BH + YY + MM + DD + 4-digit seq = 10 digits ──────────────
+
+let seqCounter = 1;
+
+export function generateServiceNumber(): string {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(2);
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const seq = String(seqCounter++).padStart(4, "0");
+  return `BH${yy}${mm}${dd}${seq}`; // e.g. BH2603300001
+}
+
+export function formatServiceNumber(id: string): string {
+  // BH2603300001 → BH-260330-0001
+  if (id.startsWith("BH") && id.length === 12) {
+    return `${id.slice(0, 2)}-${id.slice(2, 8)}-${id.slice(8)}`;
+  }
+  return id;
+}
+
+// ── Calendar ──────────────────────────────────────────────────────────────────
+
+export interface CalendarEvent {
+  id: string;
+  date: string; // YYYY-MM-DD
+  customer: string;
+  address: string;
+  equipment: string;
+  issue: string;
+  type: "builder" | "manufacturer";
+  time: string;
+  tech: string;
+  status: "completed" | "scheduled" | "pending";
+  ticketId?: string;
+}
+
+function relDate(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split("T")[0];
+}
+
+export const SEED_EVENTS: CalendarEvent[] = [
+  {
+    id: "SEED-001",
+    date: relDate(-14),
+    customer: "Rosa Martinez",
+    address: "1204 Sycamore Ln, Scottsdale AZ 85251",
+    equipment: "Pentair IntelliFlo3 VSF",
+    issue: "Pump running at low RPM — speed calibration",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "completed",
+  },
+  {
+    id: "SEED-002",
+    date: relDate(-11),
+    customer: "James Holloway",
+    address: "882 Desert View Dr, Mesa AZ 85201",
+    equipment: "Hayward H400FDN",
+    issue: "Heater error code E05 — igniter replacement",
+    type: "manufacturer",
+    time: "10:00 AM – 12:00 PM",
+    tech: "Sasser Electric",
+    status: "completed",
+  },
+  {
+    id: "SEED-003",
+    date: relDate(-7),
+    customer: "Cynthia Beaumont",
+    address: "741 Sonoran Ridge Rd, Chandler AZ 85248",
+    equipment: "Pentair MasterTemp 250",
+    issue: "Heater cycling off — flow sensor fault",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "completed",
+  },
+  {
+    id: "SEED-004",
+    date: relDate(-3),
+    customer: "Amit Patel",
+    address: "5501 Camelback Rd, Phoenix AZ 85031",
+    equipment: "Hayward OmniLogic",
+    issue: "Automation panel unresponsive — firmware reset",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "completed",
+  },
+  {
+    id: "SEED-005",
+    date: relDate(1),
+    customer: "Dana Brooks",
+    address: "9921 Oak Creek Dr, Peoria AZ 85383",
+    equipment: "Polaris P-965iQ",
+    issue: "Cleaner not navigating — drive wheel worn",
+    type: "manufacturer",
+    time: "10:00 AM – 12:00 PM",
+    tech: "Sasser Electric",
+    status: "scheduled",
+  },
+  {
+    id: "SEED-006",
+    date: relDate(3),
+    customer: "Linda Chen",
+    address: "3310 Palo Verde Ct, Tempe AZ 85281",
+    equipment: "Jandy JXi 400",
+    issue: "Heater not igniting — gas valve inspection",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "scheduled",
+  },
+  {
+    id: "SEED-007",
+    date: relDate(5),
+    customer: "Rosa Martinez",
+    address: "1204 Sycamore Ln, Scottsdale AZ 85251",
+    equipment: "Pentair IntelliBrite 5G",
+    issue: "LED lights flickering — controller board check",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "scheduled",
+  },
+  {
+    id: "SEED-008",
+    date: relDate(8),
+    customer: "James Holloway",
+    address: "882 Desert View Dr, Mesa AZ 85201",
+    equipment: "Hayward SwimClear C4030",
+    issue: "Filter pressure spiking — cartridge replacement",
+    type: "manufacturer",
+    time: "10:00 AM – 12:00 PM",
+    tech: "Sasser Electric",
+    status: "scheduled",
+  },
+  {
+    id: "SEED-009",
+    date: relDate(12),
+    customer: "Cynthia Beaumont",
+    address: "741 Sonoran Ridge Rd, Chandler AZ 85248",
+    equipment: "Zodiac MX8",
+    issue: "Cleaner stuck in corner — navigation wheel worn",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "scheduled",
+  },
+  {
+    id: "SEED-010",
+    date: relDate(15),
+    customer: "Amit Patel",
+    address: "5501 Camelback Rd, Phoenix AZ 85031",
+    equipment: "Hayward H250FDN",
+    issue: "Heater startup delay — thermal overload check",
+    type: "builder",
+    time: "9:00 AM – 11:00 AM",
+    tech: "Blue Haven Service Team",
+    status: "scheduled",
+  },
+];
+
+// ── Dates & prompts ───────────────────────────────────────────────────────────
+
 export function getServiceDate(): string {
   const d = new Date();
   d.setDate(d.getDate() + 2);
@@ -133,6 +301,8 @@ export function buildSystemPrompt(): string {
   );
 }
 
+// ── Ticket types & parsing ────────────────────────────────────────────────────
+
 export interface WarrantyTicket {
   id: string;
   createdAt: Date;
@@ -153,13 +323,10 @@ export interface WarrantyTicket {
   actionStatus?: { emailSent: boolean; eventCreated: boolean; error?: string };
 }
 
-let ticketCounter = 1001;
-
 export function parseTicket(text: string): { clean: string; ticket: WarrantyTicket | null } {
   if (!text.includes("---TICKET---")) return { clean: text, ticket: null };
   const [clean, rest] = text.split("---TICKET---");
   try {
-    // Extract JSON robustly — handles single-line or multi-line output
     const start = rest.indexOf("{");
     const end = rest.lastIndexOf("}");
     if (start === -1 || end === -1) return { clean: clean.trim(), ticket: null };
@@ -167,12 +334,14 @@ export function parseTicket(text: string): { clean: string; ticket: WarrantyTick
     const data = JSON.parse(jsonStr);
     return {
       clean: clean.trim(),
-      ticket: { id: "WR-" + ticketCounter++, createdAt: new Date(), ...data },
+      ticket: { id: generateServiceNumber(), createdAt: new Date(), ...data },
     };
   } catch {
     return { clean: clean.trim(), ticket: null };
   }
 }
+
+// ── Email ─────────────────────────────────────────────────────────────────────
 
 export function buildEmailContent(ticket: WarrantyTicket): { subject: string; body: string } {
   const isBuilder = ticket.route === "builder";

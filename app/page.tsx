@@ -1,7 +1,128 @@
 "use client";
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
-import { POOL_DB, MANUFACTURERS, SASSER, BUILDER_EMAIL, MANUFACTURER_EMAIL, parseTicket, WarrantyTicket } from "@/lib/warranty";
+import { POOL_DB, MANUFACTURERS, SASSER, BUILDER_EMAIL, MANUFACTURER_EMAIL, parseTicket, WarrantyTicket, CalendarEvent, SEED_EVENTS, formatServiceNumber } from "@/lib/warranty";
+
+// ── CalendarView ──────────────────────────────────────────────────────────────
+
+function CalendarView({ events }: { events: CalendarEvent[] }) {
+  const today = new Date().toISOString().split("T")[0];
+  const [viewMonth, setViewMonth] = useState<{ year: number; month: number }>(() => {
+    const d = new Date();
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
+  const [selected, setSelected] = useState<string>(today);
+
+  const { year, month } = viewMonth;
+  const firstDow = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const monthLabel = new Date(year, month, 1)
+    .toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    .toUpperCase();
+
+  const byDate: Record<string, CalendarEvent[]> = {};
+  events.forEach((e) => { (byDate[e.date] = byDate[e.date] || []).push(e); });
+
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  while (cells.length % 7) cells.push(null);
+
+  const selEvents = (byDate[selected] || []).slice().sort((a, b) => {
+    const o: Record<string, number> = { completed: 0, scheduled: 1, pending: 2 };
+    return o[a.status] - o[b.status];
+  });
+
+  const navBtn = (label: string, onClick: () => void) => (
+    <button onClick={onClick} style={{ background: "none", border: "1px solid #142030", color: "#2d4a60", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>{label}</button>
+  );
+
+  return (
+    <div>
+      {/* month nav */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+        {navBtn("‹", () => setViewMonth(({ year, month }) => month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }))}
+        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: "#00e5c4", letterSpacing: ".1em" }}>{monthLabel}</span>
+        {navBtn("›", () => setViewMonth(({ year, month }) => month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 }))}
+      </div>
+
+      {/* day headers */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: 3 }}>
+        {["Su","Mo","Tu","We","Th","Fr","Sa"].map((d) => (
+          <div key={d} style={{ textAlign: "center", fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", padding: "2px 0" }}>{d}</div>
+        ))}
+      </div>
+
+      {/* grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2 }}>
+        {cells.map((day, i) => {
+          if (!day) return <div key={i} style={{ height: 38 }} />;
+          const ds = `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+          const ev = byDate[ds] || [];
+          const isToday = ds === today;
+          const isSel = ds === selected;
+          const bCount = ev.filter((e) => e.type === "builder").length;
+          const mCount = ev.filter((e) => e.type === "manufacturer").length;
+          return (
+            <div key={i} onClick={() => setSelected(ds)} style={{ height: 38, borderRadius: 6, cursor: "pointer", background: isSel ? "#00e5c415" : isToday ? "#ffffff08" : "transparent", border: `1px solid ${isSel ? "#00e5c440" : isToday ? "#00e5c420" : "transparent"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, transition: "background .1s" }}>
+              <span style={{ fontSize: 11, color: isToday ? "#00e5c4" : isSel ? "#dbe8f5" : "#5a8aaa", fontWeight: isToday ? 700 : 400 }}>{day}</span>
+              {ev.length > 0 && (
+                <div style={{ display: "flex", gap: 2 }}>
+                  {bCount > 0 && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#00e5c4" }} />}
+                  {mCount > 0 && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#ff8c42" }} />}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* stats */}
+      <div style={{ display: "flex", gap: 6, margin: "12px 0" }}>
+        {[
+          { label: "Total", val: events.length, color: "#5a8aaa" },
+          { label: "Upcoming", val: events.filter((e) => e.status !== "completed").length, color: "#ff8c42" },
+          { label: "Completed", val: events.filter((e) => e.status === "completed").length, color: "#00e5c4" },
+        ].map((s) => (
+          <div key={s.label} style={{ flex: 1, background: "#0a1520", borderRadius: 8, padding: "6px 0", textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: s.color, fontFamily: "'DM Mono',monospace" }}>{s.val}</div>
+            <div style={{ fontSize: 8, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".08em" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* selected day */}
+      <div style={{ borderTop: "1px solid #0f1d29", paddingTop: 10 }}>
+        <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>
+          {selected === today ? "Today" : new Date(selected + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+          {" — "}{selEvents.length || "No"} appointment{selEvents.length !== 1 ? "s" : ""}
+        </div>
+        {selEvents.length === 0 ? (
+          <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "16px 0" }}>No appointments scheduled</div>
+        ) : selEvents.map((e) => {
+          const color = e.type === "builder" ? "#00e5c4" : "#ff8c42";
+          const statusIcon = e.status === "completed" ? "✓" : e.status === "scheduled" ? "◎" : "●";
+          const statusColor = e.status === "completed" ? "#00e5c4" : e.status === "scheduled" ? "#ff8c42" : "#5a8aaa";
+          return (
+            <div key={e.id} style={{ background: "#0a1520", borderLeft: `3px solid ${color}`, borderRadius: 8, padding: "8px 12px", marginBottom: 6, animation: "pop .2s ease" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 2 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#c8dce8" }}>{e.customer}</span>
+                <span style={{ fontSize: 9, color: statusColor, fontFamily: "monospace" }}>{statusIcon} {e.status}</span>
+              </div>
+              <div style={{ fontSize: 10, color: "#5a8aaa" }}>{e.equipment}</div>
+              <div style={{ fontSize: 10, color: "#2d4a60", marginTop: 2 }}>{e.issue}</div>
+              <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                <span style={{ fontSize: 9, color: "#1e3040", fontFamily: "monospace" }}>🕐 {e.time}</span>
+                <span style={{ fontSize: 9, color, fontFamily: "monospace" }}>{e.type === "builder" ? "🏊 Blue Haven" : "⚡ Sasser"}</span>
+              </div>
+              {e.ticketId && <div style={{ fontSize: 8, color: "#142030", fontFamily: "monospace", marginTop: 3 }}>{formatServiceNumber(e.ticketId)}</div>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -116,15 +237,19 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
           >
             {builder ? "⚡ Builder Warranty" : "🔧 Manufacturer Warranty"}
           </div>
+          <div style={{ fontSize: 9, color: builder ? "#003d2e" : "#3d1a00", fontFamily: "monospace", letterSpacing: ".1em", textTransform: "uppercase", marginTop: 4 }}>
+            Service #
+          </div>
           <div
             style={{
-              fontSize: 22,
+              fontSize: 18,
               fontWeight: 800,
               color: builder ? "#001a12" : "#1a0800",
               fontFamily: "monospace",
+              letterSpacing: ".05em",
             }}
           >
-            {t.id}
+            {formatServiceNumber(t.id)}
           </div>
         </div>
         <div
@@ -317,7 +442,8 @@ export default function App() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [tickets, setTickets] = useState<WarrantyTicket[]>([]);
-  const [tab, setTab] = useState<"customers" | "tickets">("customers");
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(SEED_EVENTS);
+  const [tab, setTab] = useState<"tickets" | "calendar" | "customers">("customers");
 
   const endRef = useRef<HTMLDivElement>(null);
   const inRef = useRef<HTMLInputElement>(null);
@@ -357,7 +483,21 @@ export default function App() {
       if (ticket) {
         const newTicket: WarrantyTicket = { ...ticket, dispatching: true };
         setTickets((p) => [newTicket, ...p]);
-        setTab("tickets");
+        const calEvent: CalendarEvent = {
+          id: ticket.id,
+          date: ticket.serviceDate,
+          customer: ticket.customerName,
+          address: ticket.customerAddress,
+          equipment: ticket.equipment,
+          issue: ticket.issueDescription,
+          type: ticket.route,
+          time: "9:00 AM – 11:00 AM",
+          tech: ticket.techAssigned,
+          status: "pending",
+          ticketId: ticket.id,
+        };
+        setCalendarEvents((p) => [...p, calEvent]);
+        setTab("calendar");
 
         try {
           const dispatchRes = await fetch("/api/dispatch", {
@@ -798,12 +938,13 @@ export default function App() {
               {(
                 [
                   ["tickets", `Tickets${tickets.length ? ` (${tickets.length})` : ""}`],
-                  ["customers", "Demo Customers"],
+                  ["calendar", "Calendar"],
+                  ["customers", "Customers"],
                 ] as [string, string][]
               ).map(([id, label]) => (
                 <button
                   key={id}
-                  onClick={() => setTab(id as "customers" | "tickets")}
+                  onClick={() => setTab(id as "tickets" | "calendar" | "customers")}
                   style={{
                     background: "none",
                     border: "none",
@@ -854,6 +995,13 @@ export default function App() {
                 ) : (
                   tickets.map((t) => <TicketCard key={t.id} t={t} />)
                 )}
+              </div>
+            )}
+
+            {/* calendar tab */}
+            {tab === "calendar" && (
+              <div style={{ background: "#0a1520", borderRadius: 14, padding: "14px 16px" }}>
+                <CalendarView events={calendarEvents} />
               </div>
             )}
 
