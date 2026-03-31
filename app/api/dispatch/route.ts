@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { buildEmailContent, WarrantyTicket, BUILDER_EMAIL, MANUFACTURER_EMAIL, BLUEHAVEN_CC } from "@/lib/warranty";
+import { buildEmailContent, WarrantyTicket, CalendarEvent, BUILDER_EMAIL, MANUFACTURER_EMAIL, BLUEHAVEN_CC } from "@/lib/warranty";
+import { addEvent } from "@/lib/eventStore";
 
 export const maxDuration = 30;
 
@@ -40,7 +41,23 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(`Email sent: ${ticket.id} → ${toEmail}${ccEmails.length ? ` CC ${ccEmails.join(", ")}` : ""}`);
-    return NextResponse.json({ emailSent: true, eventCreated: false });
+
+    const calEvent: CalendarEvent = {
+      id: ticket.id,
+      date: ticket.serviceDate,
+      customer: ticket.customerName,
+      address: ticket.customerAddress,
+      equipment: ticket.equipment,
+      issue: ticket.issueDescription,
+      type: ticket.route,
+      time: "9:00 AM – 11:00 AM",
+      tech: ticket.techAssigned,
+      status: "pending",
+      ticketId: ticket.id,
+    };
+    addEvent(calEvent);
+
+    return NextResponse.json({ emailSent: true, eventCreated: true });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Dispatch API error:", message);
