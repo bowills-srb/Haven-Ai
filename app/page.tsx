@@ -34,7 +34,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
   });
 
   const navBtn = (label: string, onClick: () => void) => (
-    <button onClick={onClick} style={{ background: "none", border: "1px solid #142030", color: "#2d4a60", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>{label}</button>
+    <button onClick={onClick} style={{ background: "none", border: "1px solid #a8c8e0", color: "#306080", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>{label}</button>
   );
 
   return (
@@ -42,14 +42,14 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
       {/* month nav */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
         {navBtn("‹", () => setViewMonth(({ year, month }) => month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }))}
-        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: "#00e5c4", letterSpacing: ".1em" }}>{monthLabel}</span>
+        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: "#009985", letterSpacing: ".1em" }}>{monthLabel}</span>
         {navBtn("›", () => setViewMonth(({ year, month }) => month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 }))}
       </div>
 
       {/* day headers */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: 3 }}>
         {["Su","Mo","Tu","We","Th","Fr","Sa"].map((d) => (
-          <div key={d} style={{ textAlign: "center", fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", padding: "2px 0" }}>{d}</div>
+          <div key={d} style={{ textAlign: "center", fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", padding: "2px 0" }}>{d}</div>
         ))}
       </div>
 
@@ -64,12 +64,12 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
           const bCount = ev.filter((e) => e.type === "builder").length;
           const mCount = ev.filter((e) => e.type === "manufacturer").length;
           return (
-            <div key={i} onClick={() => setSelected(ds)} style={{ height: 38, borderRadius: 6, cursor: "pointer", background: isSel ? "#00e5c415" : isToday ? "#ffffff08" : "transparent", border: `1px solid ${isSel ? "#00e5c440" : isToday ? "#00e5c420" : "transparent"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, transition: "background .1s" }}>
-              <span style={{ fontSize: 11, color: isToday ? "#00e5c4" : isSel ? "#dbe8f5" : "#5a8aaa", fontWeight: isToday ? 700 : 400 }}>{day}</span>
+            <div key={i} onClick={() => setSelected(ds)} style={{ height: 38, borderRadius: 6, cursor: "pointer", background: isSel ? "#00998515" : isToday ? "#e8f4fb" : "transparent", border: `1px solid ${isSel ? "#00998540" : isToday ? "#00998520" : "transparent"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, transition: "background .1s" }}>
+              <span style={{ fontSize: 11, color: isToday ? "#009985" : isSel ? "#071523" : "#1a4868", fontWeight: isToday ? 700 : 400 }}>{day}</span>
               {ev.length > 0 && (
                 <div style={{ display: "flex", gap: 2 }}>
-                  {bCount > 0 && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#00e5c4" }} />}
-                  {mCount > 0 && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#ff8c42" }} />}
+                  {bCount > 0 && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#009985" }} />}
+                  {mCount > 0 && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#e07030" }} />}
                 </div>
               )}
             </div>
@@ -80,42 +80,42 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
       {/* stats */}
       <div style={{ display: "flex", gap: 6, margin: "12px 0" }}>
         {[
-          { label: "Total", val: events.length, color: "#5a8aaa" },
-          { label: "Upcoming", val: events.filter((e) => e.status !== "completed").length, color: "#ff8c42" },
-          { label: "Completed", val: events.filter((e) => e.status === "completed").length, color: "#00e5c4" },
+          { label: "Total", val: events.length, color: "#1a4868" },
+          { label: "Upcoming", val: events.filter((e) => e.status !== "completed").length, color: "#e07030" },
+          { label: "Completed", val: events.filter((e) => e.status === "completed").length, color: "#009985" },
         ].map((s) => (
-          <div key={s.label} style={{ flex: 1, background: "#0a1520", borderRadius: 8, padding: "6px 0", textAlign: "center" }}>
+          <div key={s.label} style={{ flex: 1, background: "#ffffff", borderRadius: 8, padding: "6px 0", textAlign: "center" }}>
             <div style={{ fontSize: 18, fontWeight: 700, color: s.color, fontFamily: "'DM Mono',monospace" }}>{s.val}</div>
-            <div style={{ fontSize: 8, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".08em" }}>{s.label}</div>
+            <div style={{ fontSize: 8, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".08em" }}>{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* selected day */}
-      <div style={{ borderTop: "1px solid #0f1d29", paddingTop: 10 }}>
-        <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>
+      <div style={{ borderTop: "1px solid #c4dcf0", paddingTop: 10 }}>
+        <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>
           {selected === today ? "Today" : new Date(selected + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
           {" — "}{selEvents.length || "No"} appointment{selEvents.length !== 1 ? "s" : ""}
         </div>
         {selEvents.length === 0 ? (
-          <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "16px 0" }}>No appointments scheduled</div>
+          <div style={{ fontSize: 11, color: "#a8c8e0", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "16px 0" }}>No appointments scheduled</div>
         ) : selEvents.map((e) => {
-          const color = e.type === "builder" ? "#00e5c4" : "#ff8c42";
+          const color = e.type === "builder" ? "#009985" : "#e07030";
           const statusIcon = e.status === "completed" ? "✓" : e.status === "scheduled" ? "◎" : "●";
-          const statusColor = e.status === "completed" ? "#00e5c4" : e.status === "scheduled" ? "#ff8c42" : "#5a8aaa";
+          const statusColor = e.status === "completed" ? "#009985" : e.status === "scheduled" ? "#e07030" : "#1a4868";
           return (
-            <div key={e.id} style={{ background: "#0a1520", borderLeft: `3px solid ${color}`, borderRadius: 8, padding: "8px 12px", marginBottom: 6, animation: "pop .2s ease" }}>
+            <div key={e.id} style={{ background: "#ffffff", borderLeft: `3px solid ${color}`, borderRadius: 8, padding: "8px 12px", marginBottom: 6, animation: "pop .2s ease" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 2 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: "#c8dce8" }}>{e.customer}</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#0d2137" }}>{e.customer}</span>
                 <span style={{ fontSize: 9, color: statusColor, fontFamily: "monospace" }}>{statusIcon} {e.status}</span>
               </div>
-              <div style={{ fontSize: 10, color: "#5a8aaa" }}>{e.equipment}</div>
-              <div style={{ fontSize: 10, color: "#2d4a60", marginTop: 2 }}>{e.issue}</div>
+              <div style={{ fontSize: 10, color: "#1a4868" }}>{e.equipment}</div>
+              <div style={{ fontSize: 10, color: "#306080", marginTop: 2 }}>{e.issue}</div>
               <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-                <span style={{ fontSize: 9, color: "#1e3040", fontFamily: "monospace" }}>🕐 {e.time}</span>
+                <span style={{ fontSize: 9, color: "#5a7e96", fontFamily: "monospace" }}>🕐 {e.time}</span>
                 <span style={{ fontSize: 9, color, fontFamily: "monospace" }}>{e.type === "builder" ? "🏊 Blue Haven" : "⚡ Sasser"}</span>
               </div>
-              {e.ticketId && <div style={{ fontSize: 8, color: "#142030", fontFamily: "monospace", marginTop: 3 }}>{formatServiceNumber(e.ticketId)}</div>}
+              {e.ticketId && <div style={{ fontSize: 8, color: "#a8c8e0", fontFamily: "monospace", marginTop: 3 }}>{formatServiceNumber(e.ticketId)}</div>}
             </div>
           );
         })}
@@ -193,7 +193,7 @@ function Bubble({ msg }: { msg: ChatMessage }) {
 
 function TicketCard({ t }: { t: WarrantyTicket }) {
   const builder = t.route === "builder";
-  const color = builder ? "#00c49a" : "#ff8c42";
+  const color = builder ? "#008878" : "#e07030";
 
   const rows: [string, string][] = [
     ["Customer", t.customerName + (t.customerPhone ? " · " + t.customerPhone : "")],
@@ -366,7 +366,7 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
         <div
           style={{
             marginTop: 12,
-            background: "#0a1520",
+            background: "#ffffff",
             borderRadius: 10,
             padding: "10px 14px",
           }}
@@ -375,7 +375,7 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
             <div
               style={{
                 fontSize: 11,
-                color: "#00e5c4",
+                color: "#009985",
                 fontFamily: "monospace",
                 animation: "blink 1.5s ease infinite",
               }}
@@ -387,7 +387,7 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
               <div
                 style={{
                   fontSize: 10,
-                  color: "#1e3040",
+                  color: "#5a7e96",
                   fontFamily: "monospace",
                   textTransform: "uppercase",
                   letterSpacing: ".1em",
@@ -400,7 +400,7 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
                 style={{
                   fontSize: 12,
                   fontFamily: "monospace",
-                  color: t.actionStatus.emailSent ? "#00e5c4" : "#ff6b6b",
+                  color: t.actionStatus.emailSent ? "#009985" : "#d94040",
                   marginBottom: 3,
                 }}
               >
@@ -410,13 +410,13 @@ function TicketCard({ t }: { t: WarrantyTicket }) {
                 style={{
                   fontSize: 12,
                   fontFamily: "monospace",
-                  color: t.actionStatus.eventCreated ? "#00e5c4" : "#ff6b6b",
+                  color: t.actionStatus.eventCreated ? "#009985" : "#d94040",
                 }}
               >
                 {t.actionStatus.eventCreated ? "✓" : "✗"} Calendar → {fmtDate(t.serviceDate)} 9–11 AM
               </div>
               {t.actionStatus.error && (
-                <div style={{ fontSize: 10, color: "#ff6b6b", fontFamily: "monospace", marginTop: 6, wordBreak: "break-all" }}>
+                <div style={{ fontSize: 10, color: "#d94040", fontFamily: "monospace", marginTop: 6, wordBreak: "break-all" }}>
                   ⚠ {t.actionStatus.error}
                 </div>
               )}
@@ -559,7 +559,7 @@ export default function App() {
       <div
         style={{
           minHeight: "100vh",
-          background: "#07101a",
+          background: "#eef6fc",
           fontFamily: "'Barlow',sans-serif",
           display: "flex",
           flexDirection: "column",
@@ -568,8 +568,8 @@ export default function App() {
         {/* ── top bar ── */}
         <div
           style={{
-            background: "#050c14",
-            borderBottom: "1px solid #0f1d29",
+            background: "#0d2137",
+            borderBottom: "1px solid #c4dcf0",
             padding: "14px 24px",
             display: "flex",
             alignItems: "center",
@@ -582,7 +582,7 @@ export default function App() {
                 width: 34,
                 height: 34,
                 borderRadius: 9,
-                background: "linear-gradient(135deg,#00e5c4,#0076ff)",
+                background: "linear-gradient(135deg,#009985,#0076ff)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -600,7 +600,7 @@ export default function App() {
                   fontFamily: "'Barlow Condensed',sans-serif",
                   fontWeight: 800,
                   fontSize: 17,
-                  color: "#00e5c4",
+                  color: "#009985",
                   letterSpacing: ".07em",
                 }}
               >
@@ -609,7 +609,7 @@ export default function App() {
               <div
                 style={{
                   fontSize: 10,
-                  color: "#1e3040",
+                  color: "#5a7e96",
                   fontFamily: "'DM Mono',monospace",
                   letterSpacing: ".1em",
                 }}
@@ -624,14 +624,14 @@ export default function App() {
                 width: 7,
                 height: 7,
                 borderRadius: "50%",
-                background: "#00e5c4",
+                background: "#009985",
                 animation: "blink 2s ease infinite",
               }}
             />
             <span
               style={{
                 fontSize: 10,
-                color: "#00e5c4",
+                color: "#009985",
                 fontFamily: "'DM Mono',monospace",
                 letterSpacing: ".1em",
               }}
@@ -715,7 +715,7 @@ export default function App() {
                       width: 40,
                       height: 40,
                       borderRadius: "50%",
-                      background: "linear-gradient(135deg,#00e5c4,#0076ff)",
+                      background: "linear-gradient(135deg,#009985,#0076ff)",
                       margin: "0 auto 4px",
                       display: "flex",
                       alignItems: "center",
@@ -831,12 +831,12 @@ export default function App() {
               onClick={reset}
               style={{
                 background: "none",
-                border: "1px solid #142030",
+                border: "1px solid #a8c8e0",
                 borderRadius: 8,
                 padding: "7px 18px",
                 fontFamily: "'DM Mono',monospace",
                 fontSize: 10,
-                color: "#2d4a60",
+                color: "#306080",
                 cursor: "pointer",
                 letterSpacing: ".12em",
                 textTransform: "uppercase",
@@ -854,7 +854,7 @@ export default function App() {
                   fontFamily: "'Barlow Condensed',sans-serif",
                   fontSize: 26,
                   fontWeight: 800,
-                  color: "#dbe8f5",
+                  color: "#071523",
                   letterSpacing: ".02em",
                 }}
               >
@@ -863,7 +863,7 @@ export default function App() {
               <p
                 style={{
                   fontSize: 10,
-                  color: "#1e3040",
+                  color: "#5a7e96",
                   fontFamily: "'DM Mono',monospace",
                   marginTop: 2,
                 }}
@@ -875,13 +875,13 @@ export default function App() {
             {/* routing legend */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9, marginBottom: 14 }}>
               {[
-                { color: "#00e5c4", icon: "🏊", title: "Builder Warranty", sub: "≤60 days · Blue Haven" },
-                { color: "#ff8c42", icon: "⚡", title: "Manufacturer", sub: ">60 days · Sasser Electric" },
+                { color: "#009985", icon: "🏊", title: "Builder Warranty", sub: "≤60 days · Blue Haven" },
+                { color: "#e07030", icon: "⚡", title: "Manufacturer", sub: ">60 days · Sasser Electric" },
               ].map((x) => (
                 <div
                   key={x.title}
                   style={{
-                    background: "#0a1520",
+                    background: "#ffffff",
                     border: "1px solid " + x.color + "22",
                     borderLeft: "3px solid " + x.color,
                     borderRadius: 10,
@@ -893,9 +893,9 @@ export default function App() {
                 >
                   <span style={{ fontSize: 18 }}>{x.icon}</span>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: "#c8dce8" }}>{x.title}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#0d2137" }}>{x.title}</div>
                     <div
-                      style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace" }}
+                      style={{ fontSize: 10, color: "#5a7e96", fontFamily: "'DM Mono',monospace" }}
                     >
                       {x.sub}
                     </div>
@@ -907,8 +907,8 @@ export default function App() {
             {/* dispatch target */}
             <div
               style={{
-                background: "#0a1520",
-                border: "1px solid #00e5c418",
+                background: "#ffffff",
+                border: "1px solid #00998518",
                 borderRadius: 10,
                 padding: "10px 14px",
                 marginBottom: 16,
@@ -917,7 +917,7 @@ export default function App() {
               <div
                 style={{
                   fontSize: 10,
-                  color: "#1e3040",
+                  color: "#5a7e96",
                   fontFamily: "'DM Mono',monospace",
                   textTransform: "uppercase",
                   letterSpacing: ".1em",
@@ -926,25 +926,25 @@ export default function App() {
               >
                 Auto-Dispatch To
               </div>
-              <div style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>
+              <div style={{ fontSize: 10, color: "#5a7e96", fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>
                 BUILDER ≤60d
               </div>
-              <div style={{ fontSize: 12, color: "#00e5c4", fontFamily: "'DM Mono',monospace", marginBottom: 8 }}>
+              <div style={{ fontSize: 12, color: "#009985", fontFamily: "'DM Mono',monospace", marginBottom: 8 }}>
                 ✉️ {BUILDER_EMAIL}
               </div>
-              <div style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>
+              <div style={{ fontSize: 10, color: "#5a7e96", fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>
                 MANUFACTURER &gt;60d
               </div>
-              <div style={{ fontSize: 12, color: "#ff8c42", fontFamily: "'DM Mono',monospace", marginBottom: 8 }}>
+              <div style={{ fontSize: 12, color: "#e07030", fontFamily: "'DM Mono',monospace", marginBottom: 8 }}>
                 ✉️ {MANUFACTURER_EMAIL}
               </div>
-              <div style={{ fontSize: 12, color: "#00e5c4", fontFamily: "'DM Mono',monospace" }}>
+              <div style={{ fontSize: 12, color: "#009985", fontFamily: "'DM Mono',monospace" }}>
                 📅 Google Calendar · 9–11 AM next business day
               </div>
             </div>
 
             {/* tabs */}
-            <div style={{ display: "flex", borderBottom: "1px solid #0f1d29", marginBottom: 14 }}>
+            <div style={{ display: "flex", borderBottom: "1px solid #c4dcf0", marginBottom: 14 }}>
               {(
                 [
                   ["tickets", `Tickets${tickets.length ? ` (${tickets.length})` : ""}`],
@@ -959,7 +959,7 @@ export default function App() {
                   style={{
                     background: "none",
                     border: "none",
-                    borderBottom: "2px solid " + (tab === id ? "#00e5c4" : "transparent"),
+                    borderBottom: "2px solid " + (tab === id ? "#009985" : "transparent"),
                     marginBottom: -1,
                     cursor: "pointer",
                     fontFamily: "'DM Mono',monospace",
@@ -967,7 +967,7 @@ export default function App() {
                     letterSpacing: ".12em",
                     textTransform: "uppercase",
                     padding: "7px 14px",
-                    color: tab === id ? "#00e5c4" : "#1e3040",
+                    color: tab === id ? "#009985" : "#5a7e96",
                     transition: "all .15s",
                   }}
                 >
@@ -982,8 +982,8 @@ export default function App() {
                 {!tickets.length ? (
                   <div
                     style={{
-                      background: "#0a1520",
-                      border: "1px dashed #142030",
+                      background: "#ffffff",
+                      border: "1px dashed #a8c8e0",
                       borderRadius: 14,
                       padding: "44px 20px",
                       textAlign: "center",
@@ -994,7 +994,7 @@ export default function App() {
                       style={{
                         fontFamily: "'DM Mono',monospace",
                         fontSize: 11,
-                        color: "#1e3040",
+                        color: "#5a7e96",
                         lineHeight: 2,
                       }}
                     >
@@ -1011,7 +1011,7 @@ export default function App() {
 
             {/* calendar tab */}
             {tab === "calendar" && (
-              <div style={{ background: "#0a1520", borderRadius: 14, padding: "14px 16px" }}>
+              <div style={{ background: "#ffffff", borderRadius: 14, padding: "14px 16px" }}>
                 <CalendarView events={calendarEvents} />
               </div>
             )}
@@ -1024,18 +1024,18 @@ export default function App() {
               const avgDays = total ? Math.round(tickets.reduce((s, t) => s + t.daysSinceStart, 0) / total) : 0;
               const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
               const statCard = (label: string, val: string | number, color: string) => (
-                <div key={label} style={{ background: "#0a1520", borderRadius: 10, padding: "14px 16px", flex: 1 }}>
+                <div key={label} style={{ background: "#ffffff", borderRadius: 10, padding: "14px 16px", flex: 1 }}>
                   <div style={{ fontSize: 28, fontWeight: 700, color, fontFamily: "'DM Mono',monospace" }}>{val}</div>
-                  <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginTop: 4 }}>{label}</div>
+                  <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginTop: 4 }}>{label}</div>
                 </div>
               );
               const bar = (label: string, count: number, color: string) => (
                 <div key={label} style={{ marginBottom: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                    <span style={{ fontSize: 10, color: "#5a8aaa", fontFamily: "'DM Mono',monospace" }}>{label}</span>
+                    <span style={{ fontSize: 10, color: "#1a4868", fontFamily: "'DM Mono',monospace" }}>{label}</span>
                     <span style={{ fontSize: 10, color, fontFamily: "'DM Mono',monospace" }}>{count} · {pct(count)}%</span>
                   </div>
-                  <div style={{ height: 6, background: "#0a1520", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ height: 6, background: "#ffffff", borderRadius: 3, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${pct(count)}%`, background: color, borderRadius: 3, transition: "width .4s ease" }} />
                   </div>
                 </div>
@@ -1043,24 +1043,24 @@ export default function App() {
               return (
                 <div>
                   <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-                    {statCard("Total Tickets", total, "#dbe8f5")}
-                    {statCard("Avg Pool Age", total ? `${avgDays}d` : "—", "#5a8aaa")}
+                    {statCard("Total Tickets", total, "#071523")}
+                    {statCard("Avg Pool Age", total ? `${avgDays}d` : "—", "#1a4868")}
                   </div>
-                  <div style={{ background: "#0a1520", borderRadius: 10, padding: "14px 16px", marginBottom: 14 }}>
-                    <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 12 }}>Routing Split</div>
-                    {bar("Builder Warranty — Blue Haven", builder, "#00e5c4")}
-                    {bar("Manufacturer — Sasser Electric", manufacturer, "#ff8c42")}
-                    {total === 0 && <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "10px 0" }}>No tickets yet</div>}
+                  <div style={{ background: "#ffffff", borderRadius: 10, padding: "14px 16px", marginBottom: 14 }}>
+                    <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 12 }}>Routing Split</div>
+                    {bar("Builder Warranty — Blue Haven", builder, "#009985")}
+                    {bar("Manufacturer — Sasser Electric", manufacturer, "#e07030")}
+                    {total === 0 && <div style={{ fontSize: 11, color: "#a8c8e0", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "10px 0" }}>No tickets yet</div>}
                   </div>
-                  <div style={{ background: "#0a1520", borderRadius: 10, padding: "14px 16px" }}>
-                    <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 10 }}>Recent Tickets</div>
+                  <div style={{ background: "#ffffff", borderRadius: 10, padding: "14px 16px" }}>
+                    <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 10 }}>Recent Tickets</div>
                     {tickets.slice(0, 5).map((t) => (
-                      <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #0f1d29", padding: "6px 0" }}>
-                        <span style={{ fontSize: 11, color: "#c8dce8" }}>{t.customerName}</span>
-                        <span style={{ fontSize: 9, color: t.route === "builder" ? "#00e5c4" : "#ff8c42", fontFamily: "'DM Mono',monospace" }}>{t.route === "builder" ? "Builder" : "Manufacturer"}</span>
+                      <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #c4dcf0", padding: "6px 0" }}>
+                        <span style={{ fontSize: 11, color: "#0d2137" }}>{t.customerName}</span>
+                        <span style={{ fontSize: 9, color: t.route === "builder" ? "#009985" : "#e07030", fontFamily: "'DM Mono',monospace" }}>{t.route === "builder" ? "Builder" : "Manufacturer"}</span>
                       </div>
                     ))}
-                    {total === 0 && <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "10px 0" }}>No tickets yet</div>}
+                    {total === 0 && <div style={{ fontSize: 11, color: "#a8c8e0", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "10px 0" }}>No tickets yet</div>}
                   </div>
                 </div>
               );
@@ -1072,7 +1072,7 @@ export default function App() {
                 <p
                   style={{
                     fontSize: 11,
-                    color: "#1e3040",
+                    color: "#5a7e96",
                     fontFamily: "'DM Mono',monospace",
                     marginBottom: 12,
                     lineHeight: 1.8,
@@ -1083,7 +1083,7 @@ export default function App() {
 
                 {POOL_DB.map((p) => {
                   const builder = p.daysAgo <= 60;
-                  const color = builder ? "#00e5c4" : "#ff8c42";
+                  const color = builder ? "#009985" : "#e07030";
                   return (
                     <button
                       key={p.address}
@@ -1094,7 +1094,7 @@ export default function App() {
                       style={{
                         display: "block",
                         width: "100%",
-                        background: "#0d1520",
+                        background: "#f4f9ff",
                         border: "1px solid " + color + "20",
                         borderLeft: "3px solid " + color,
                         borderRadius: 8,
@@ -1105,16 +1105,16 @@ export default function App() {
                         transition: "background .1s",
                       }}
                       onMouseEnter={(e) =>
-                        ((e.currentTarget as HTMLButtonElement).style.background = "#111d2a")
+                        ((e.currentTarget as HTMLButtonElement).style.background = "#e4f0fa")
                       }
                       onMouseLeave={(e) =>
-                        ((e.currentTarget as HTMLButtonElement).style.background = "#0d1520")
+                        ((e.currentTarget as HTMLButtonElement).style.background = "#f4f9ff")
                       }
                     >
                       <div
                         style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
                       >
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#c8dce8" }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#0d2137" }}>
                           {p.customer}
                         </span>
                         <span
@@ -1133,7 +1133,7 @@ export default function App() {
                       <div
                         style={{
                           fontSize: 11,
-                          color: "#2d4a60",
+                          color: "#306080",
                           fontFamily: "monospace",
                           marginTop: 3,
                         }}
@@ -1143,7 +1143,7 @@ export default function App() {
                       <div
                         style={{
                           fontSize: 10,
-                          color: "#1e3040",
+                          color: "#5a7e96",
                           fontFamily: "monospace",
                           marginTop: 2,
                         }}
@@ -1158,8 +1158,8 @@ export default function App() {
                 <div
                   style={{
                     marginTop: 16,
-                    background: "#0a1520",
-                    border: "1px solid #0f1d29",
+                    background: "#ffffff",
+                    border: "1px solid #c4dcf0",
                     borderRadius: 12,
                     padding: "14px 16px",
                   }}
@@ -1168,7 +1168,7 @@ export default function App() {
                     style={{
                       fontSize: 10,
                       fontFamily: "'DM Mono',monospace",
-                      color: "#1e3040",
+                      color: "#5a7e96",
                       textTransform: "uppercase",
                       letterSpacing: ".1em",
                       marginBottom: 10,
@@ -1176,11 +1176,11 @@ export default function App() {
                   >
                     Routing Contacts
                   </div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: "#ff8c42", marginBottom: 2 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#e07030", marginBottom: 2 }}>
                     {SASSER.name}
                   </div>
                   <div
-                    style={{ fontSize: 11, color: "#2d4a60", fontFamily: "monospace", marginBottom: 12 }}
+                    style={{ fontSize: 11, color: "#306080", fontFamily: "monospace", marginBottom: 12 }}
                   >
                     {SASSER.phone} · {SASSER.email}
                   </div>
@@ -1192,11 +1192,11 @@ export default function App() {
                         justifyContent: "space-between",
                         paddingBottom: 5,
                         marginBottom: 5,
-                        borderBottom: "1px solid #0f1d29",
+                        borderBottom: "1px solid #c4dcf0",
                       }}
                     >
-                      <span style={{ fontSize: 12, fontWeight: 600, color: "#5a8aaa" }}>{brand}</span>
-                      <span style={{ fontSize: 11, color: "#1e3040", fontFamily: "monospace" }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: "#1a4868" }}>{brand}</span>
+                      <span style={{ fontSize: 11, color: "#5a7e96", fontFamily: "monospace" }}>
                         {phone}
                       </span>
                     </div>

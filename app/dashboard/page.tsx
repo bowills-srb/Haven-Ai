@@ -20,23 +20,23 @@ const NAV = [
 
 function Header({ lastUpdated }: { lastUpdated: Date | null }) {
   return (
-    <div style={{ background: "#050c14", borderBottom: "1px solid #0f1d29", padding: "14px 28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+    <div style={{ background: "#0d2137", borderBottom: "1px solid #c4dcf0", padding: "14px 28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: "linear-gradient(135deg,#00e5c4,#0076ff)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "#fff", fontFamily: "'Barlow Condensed',sans-serif" }}>BH</div>
+        <div style={{ width: 34, height: 34, borderRadius: 9, background: "linear-gradient(135deg,#009985,#0076ff)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "#fff", fontFamily: "'Barlow Condensed',sans-serif" }}>BH</div>
         <div>
-          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: 17, color: "#00e5c4", letterSpacing: ".07em" }}>BLUE HAVEN · OPERATIONS DASHBOARD</div>
-          <div style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em" }}>HAVEN AI · LIVE DISPATCH OVERVIEW</div>
+          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, fontSize: 17, color: "#009985", letterSpacing: ".07em" }}>BLUE HAVEN · OPERATIONS DASHBOARD</div>
+          <div style={{ fontSize: 10, color: "#5a7e96", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em" }}>HAVEN AI · LIVE DISPATCH OVERVIEW</div>
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        {lastUpdated && <span style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace" }}>SYNCED {fmtTime(lastUpdated)}</span>}
+        {lastUpdated && <span style={{ fontSize: 10, color: "#5a7e96", fontFamily: "'DM Mono',monospace" }}>SYNCED {fmtTime(lastUpdated)}</span>}
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#00e5c4", animation: "blink 2s ease infinite" }} />
-          <span style={{ fontSize: 10, color: "#00e5c4", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em" }}>LIVE</span>
+          <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#009985", animation: "blink 2s ease infinite" }} />
+          <span style={{ fontSize: 10, color: "#009985", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em" }}>LIVE</span>
         </div>
         <div style={{ display: "flex", gap: 4 }}>
           {NAV.map((n) => (
-            <a key={n.href} href={n.href} style={{ fontSize: 10, color: n.href === "/dashboard" ? "#00e5c4" : "#2d4a60", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em", textDecoration: "none", border: `1px solid ${n.href === "/dashboard" ? "#00e5c440" : "#142030"}`, borderRadius: 6, padding: "5px 12px" }}>{n.label}</a>
+            <a key={n.href} href={n.href} style={{ fontSize: 10, color: n.href === "/dashboard" ? "#009985" : "#306080", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em", textDecoration: "none", border: `1px solid ${n.href === "/dashboard" ? "#00998540" : "#a8c8e0"}`, borderRadius: 6, padding: "5px 12px" }}>{n.label}</a>
           ))}
         </div>
       </div>
@@ -94,98 +94,98 @@ export default function Dashboard() {
   });
 
   const statCard = (label: string, val: string | number, color: string, sub?: string) => (
-    <div style={{ background: "#0a1520", borderRadius: 12, padding: "16px 20px", flex: 1 }}>
+    <div style={{ background: "#ffffff", borderRadius: 12, padding: "16px 20px", flex: 1 }}>
       <div style={{ fontSize: 32, fontWeight: 700, color, fontFamily: "'DM Mono',monospace", lineHeight: 1 }}>{val}</div>
-      <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginTop: 6 }}>{label}</div>
-      {sub && <div style={{ fontSize: 10, color: "#2d4a60", fontFamily: "'DM Mono',monospace", marginTop: 3 }}>{sub}</div>}
+      <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginTop: 6 }}>{label}</div>
+      {sub && <div style={{ fontSize: 10, color: "#306080", fontFamily: "'DM Mono',monospace", marginTop: 3 }}>{sub}</div>}
     </div>
   );
 
   const bar = (label: string, count: number, color: string) => (
     <div style={{ marginBottom: 12 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-        <span style={{ fontSize: 11, color: "#5a8aaa" }}>{label}</span>
+        <span style={{ fontSize: 11, color: "#1a4868" }}>{label}</span>
         <span style={{ fontSize: 11, color, fontFamily: "'DM Mono',monospace" }}>{count} · {pct(count)}%</span>
       </div>
-      <div style={{ height: 7, background: "#07101a", borderRadius: 4, overflow: "hidden" }}>
+      <div style={{ height: 7, background: "#eef6fc", borderRadius: 4, overflow: "hidden" }}>
         <div style={{ height: "100%", width: `${pct(count)}%`, background: color, borderRadius: 4, transition: "width .5s ease" }} />
       </div>
     </div>
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#07101a", fontFamily: "'Barlow',sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", background: "#eef6fc", fontFamily: "'Barlow',sans-serif", display: "flex", flexDirection: "column" }}>
       <Header lastUpdated={lastUpdated} />
 
       <div style={{ flex: 1, padding: "24px 28px", maxWidth: 1300, margin: "0 auto", width: "100%" }}>
 
         {/* ── KPI row ── */}
         <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-          {statCard("Total Tickets", total, "#dbe8f5")}
-          {statCard("Today's Appointments", todayEvents.length, "#00e5c4", todayEvents.length === 0 ? "None scheduled" : `${todayEvents.filter(e=>e.status==="completed").length} completed`)}
-          {statCard("Upcoming", upcomingEvents.length, "#ff8c42", "Next 30 days")}
-          {statCard("Avg Pool Age", total ? `${avgDays}d` : "—", "#5a8aaa", total ? (avgDays <= 60 ? "Builder window" : "Past window") : "No data")}
-          {statCard("Completed", completedEvents.length, "#00e5c4", `of ${events.length} total`)}
+          {statCard("Total Tickets", total, "#071523")}
+          {statCard("Today's Appointments", todayEvents.length, "#009985", todayEvents.length === 0 ? "None scheduled" : `${todayEvents.filter(e=>e.status==="completed").length} completed`)}
+          {statCard("Upcoming", upcomingEvents.length, "#e07030", "Next 30 days")}
+          {statCard("Avg Pool Age", total ? `${avgDays}d` : "—", "#1a4868", total ? (avgDays <= 60 ? "Builder window" : "Past window") : "No data")}
+          {statCard("Completed", completedEvents.length, "#009985", `of ${events.length} total`)}
         </div>
 
         {/* ── middle: routing + recent tickets ── */}
         <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
 
           {/* routing panel */}
-          <div style={{ flex: "0 0 280px", background: "#0a1520", borderRadius: 14, padding: "18px 20px" }}>
-            <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 16 }}>Routing Split</div>
-            {bar("🏊 Builder · Blue Haven", builder, "#00e5c4")}
-            {bar("⚡ Manufacturer · Sasser", manufacturer, "#ff8c42")}
-            {total === 0 && <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "12px 0" }}>No tickets yet</div>}
+          <div style={{ flex: "0 0 280px", background: "#ffffff", borderRadius: 14, padding: "18px 20px" }}>
+            <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 16 }}>Routing Split</div>
+            {bar("🏊 Builder · Blue Haven", builder, "#009985")}
+            {bar("⚡ Manufacturer · Sasser", manufacturer, "#e07030")}
+            {total === 0 && <div style={{ fontSize: 11, color: "#a8c8e0", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "12px 0" }}>No tickets yet</div>}
 
-            <div style={{ borderTop: "1px solid #0f1d29", marginTop: 20, paddingTop: 16 }}>
-              <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 12 }}>Dispatch Routes</div>
+            <div style={{ borderTop: "1px solid #c4dcf0", marginTop: 20, paddingTop: 16 }}>
+              <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 12 }}>Dispatch Routes</div>
               {[
-                { label: "Builder ≤60d", color: "#00e5c4", icon: "🏊", val: "Blue Haven" },
-                { label: "Manufacturer >60d", color: "#ff8c42", icon: "⚡", val: "Sasser Electric" },
+                { label: "Builder ≤60d", color: "#009985", icon: "🏊", val: "Blue Haven" },
+                { label: "Manufacturer >60d", color: "#e07030", icon: "⚡", val: "Sasser Electric" },
               ].map((r) => (
                 <div key={r.label} style={{ borderLeft: `3px solid ${r.color}`, paddingLeft: 10, marginBottom: 10 }}>
-                  <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", letterSpacing: ".08em" }}>{r.label}</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: "#c8dce8" }}>{r.icon} {r.val}</div>
+                  <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", letterSpacing: ".08em" }}>{r.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#0d2137" }}>{r.icon} {r.val}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* recent tickets */}
-          <div style={{ flex: 1, background: "#0a1520", borderRadius: 14, padding: "18px 20px", minWidth: 0 }}>
+          <div style={{ flex: 1, background: "#ffffff", borderRadius: 14, padding: "18px 20px", minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em" }}>Recent Tickets</div>
-              <a href="/" style={{ fontSize: 9, color: "#2d4a60", fontFamily: "'DM Mono',monospace", textDecoration: "none", letterSpacing: ".08em" }}>+ New Ticket →</a>
+              <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em" }}>Recent Tickets</div>
+              <a href="/" style={{ fontSize: 9, color: "#306080", fontFamily: "'DM Mono',monospace", textDecoration: "none", letterSpacing: ".08em" }}>+ New Ticket →</a>
             </div>
             {tickets.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "32px 0", color: "#142030", fontFamily: "'DM Mono',monospace", fontSize: 11 }}>No tickets yet — start a warranty conversation</div>
+              <div style={{ textAlign: "center", padding: "32px 0", color: "#a8c8e0", fontFamily: "'DM Mono',monospace", fontSize: 11 }}>No tickets yet — start a warranty conversation</div>
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr>
                       {["Service #", "Customer", "Equipment", "Issue", "Route", "Date", "Status"].map((h) => (
-                        <th key={h} style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".08em", padding: "0 10px 10px 0", textAlign: "left", whiteSpace: "nowrap" }}>{h}</th>
+                        <th key={h} style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".08em", padding: "0 10px 10px 0", textAlign: "left", whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {tickets.map((t) => {
-                      const color = t.route === "builder" ? "#00e5c4" : "#ff8c42";
+                      const color = t.route === "builder" ? "#009985" : "#e07030";
                       const dispatched = t.actionStatus?.emailSent;
                       return (
-                        <tr key={t.id} style={{ borderTop: "1px solid #0f1d29" }}>
-                          <td style={{ padding: "10px 10px 10px 0", fontSize: 10, color: "#5a8aaa", fontFamily: "'DM Mono',monospace", whiteSpace: "nowrap" }}>{formatServiceNumber(t.id)}</td>
-                          <td style={{ padding: "10px 10px 10px 0", fontSize: 12, color: "#c8dce8", whiteSpace: "nowrap" }}>{t.customerName}</td>
-                          <td style={{ padding: "10px 10px 10px 0", fontSize: 11, color: "#2d4a60", whiteSpace: "nowrap" }}>{t.equipment}</td>
-                          <td style={{ padding: "10px 10px 10px 0", fontSize: 11, color: "#2d4a60", maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.issueDescription}</td>
+                        <tr key={t.id} style={{ borderTop: "1px solid #c4dcf0" }}>
+                          <td style={{ padding: "10px 10px 10px 0", fontSize: 10, color: "#1a4868", fontFamily: "'DM Mono',monospace", whiteSpace: "nowrap" }}>{formatServiceNumber(t.id)}</td>
+                          <td style={{ padding: "10px 10px 10px 0", fontSize: 12, color: "#0d2137", whiteSpace: "nowrap" }}>{t.customerName}</td>
+                          <td style={{ padding: "10px 10px 10px 0", fontSize: 11, color: "#306080", whiteSpace: "nowrap" }}>{t.equipment}</td>
+                          <td style={{ padding: "10px 10px 10px 0", fontSize: 11, color: "#306080", maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.issueDescription}</td>
                           <td style={{ padding: "10px 10px 10px 0", whiteSpace: "nowrap" }}>
                             <span style={{ fontSize: 9, color, background: color + "18", padding: "2px 8px", borderRadius: 20, fontFamily: "'DM Mono',monospace" }}>{t.route === "builder" ? "Builder" : "Manufacturer"}</span>
                           </td>
-                          <td style={{ padding: "10px 10px 10px 0", fontSize: 10, color: "#2d4a60", whiteSpace: "nowrap" }}>{fmtDate(t.serviceDate)}</td>
+                          <td style={{ padding: "10px 10px 10px 0", fontSize: 10, color: "#306080", whiteSpace: "nowrap" }}>{fmtDate(t.serviceDate)}</td>
                           <td style={{ padding: "10px 0 10px 0", whiteSpace: "nowrap" }}>
-                            <span style={{ fontSize: 9, color: dispatched ? "#00e5c4" : "#ff6b6b", fontFamily: "'DM Mono',monospace" }}>{dispatched ? "✓ Dispatched" : "✗ Failed"}</span>
+                            <span style={{ fontSize: 9, color: dispatched ? "#009985" : "#ff6b6b", fontFamily: "'DM Mono',monospace" }}>{dispatched ? "✓ Dispatched" : "✗ Failed"}</span>
                           </td>
                         </tr>
                       );
@@ -201,15 +201,15 @@ export default function Dashboard() {
         <div style={{ display: "flex", gap: 16 }}>
 
           {/* mini calendar */}
-          <div style={{ flex: "0 0 340px", background: "#0a1520", borderRadius: 14, padding: "18px 20px" }}>
+          <div style={{ flex: "0 0 340px", background: "#ffffff", borderRadius: 14, padding: "18px 20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <button onClick={() => setViewMonth(({ year, month }) => month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 })} style={{ background: "none", border: "1px solid #142030", color: "#2d4a60", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14 }}>‹</button>
-              <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: "#00e5c4", letterSpacing: ".1em" }}>{monthLabel}</span>
-              <button onClick={() => setViewMonth(({ year, month }) => month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 })} style={{ background: "none", border: "1px solid #142030", color: "#2d4a60", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14 }}>›</button>
+              <button onClick={() => setViewMonth(({ year, month }) => month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 })} style={{ background: "none", border: "1px solid #a8c8e0", color: "#306080", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14 }}>‹</button>
+              <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: "#009985", letterSpacing: ".1em" }}>{monthLabel}</span>
+              <button onClick={() => setViewMonth(({ year, month }) => month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 })} style={{ background: "none", border: "1px solid #a8c8e0", color: "#306080", borderRadius: 6, padding: "3px 10px", cursor: "pointer", fontSize: 14 }}>›</button>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: 3 }}>
               {["Su","Mo","Tu","We","Th","Fr","Sa"].map((d) => (
-                <div key={d} style={{ textAlign: "center", fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", padding: "2px 0" }}>{d}</div>
+                <div key={d} style={{ textAlign: "center", fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", padding: "2px 0" }}>{d}</div>
               ))}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2 }}>
@@ -222,48 +222,48 @@ export default function Dashboard() {
                 const bCount = ev.filter((e) => e.type === "builder").length;
                 const mCount = ev.filter((e) => e.type === "manufacturer").length;
                 return (
-                  <div key={i} onClick={() => setSelDate(ds)} style={{ height: 34, borderRadius: 6, cursor: "pointer", background: isSel ? "#00e5c415" : isToday ? "#ffffff08" : "transparent", border: `1px solid ${isSel ? "#00e5c440" : isToday ? "#00e5c420" : "transparent"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
-                    <span style={{ fontSize: 11, color: isToday ? "#00e5c4" : isSel ? "#dbe8f5" : "#5a8aaa", fontWeight: isToday ? 700 : 400 }}>{day}</span>
+                  <div key={i} onClick={() => setSelDate(ds)} style={{ height: 34, borderRadius: 6, cursor: "pointer", background: isSel ? "#00998515" : isToday ? "#e8f4fb" : "transparent", border: `1px solid ${isSel ? "#00998540" : isToday ? "#00998520" : "transparent"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+                    <span style={{ fontSize: 11, color: isToday ? "#009985" : isSel ? "#071523" : "#1a4868", fontWeight: isToday ? 700 : 400 }}>{day}</span>
                     {ev.length > 0 && (
                       <div style={{ display: "flex", gap: 2 }}>
-                        {bCount > 0 && <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#00e5c4" }} />}
-                        {mCount > 0 && <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#ff8c42" }} />}
+                        {bCount > 0 && <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#009985" }} />}
+                        {mCount > 0 && <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#e07030" }} />}
                       </div>
                     )}
                   </div>
                 );
               })}
             </div>
-            <div style={{ marginTop: 12, borderTop: "1px solid #0f1d29", paddingTop: 10 }}>
-              <a href="/calendar" style={{ fontSize: 9, color: "#2d4a60", fontFamily: "'DM Mono',monospace", textDecoration: "none", letterSpacing: ".08em" }}>OPEN FULL CALENDAR →</a>
+            <div style={{ marginTop: 12, borderTop: "1px solid #c4dcf0", paddingTop: 10 }}>
+              <a href="/calendar" style={{ fontSize: 9, color: "#306080", fontFamily: "'DM Mono',monospace", textDecoration: "none", letterSpacing: ".08em" }}>OPEN FULL CALENDAR →</a>
             </div>
           </div>
 
           {/* selected day detail */}
-          <div style={{ flex: 1, background: "#0a1520", borderRadius: 14, padding: "18px 20px", minWidth: 0 }}>
-            <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 4 }}>
+          <div style={{ flex: 1, background: "#ffffff", borderRadius: 14, padding: "18px 20px", minWidth: 0 }}>
+            <div style={{ fontSize: 9, color: "#5a7e96", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".12em", marginBottom: 4 }}>
               {selDate === today ? "Today" : new Date(selDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 24, fontWeight: 800, color: "#dbe8f5", marginBottom: 14 }}>
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 24, fontWeight: 800, color: "#071523", marginBottom: 14 }}>
               {selEvents.length === 0 ? "No Appointments" : `${selEvents.length} Appointment${selEvents.length !== 1 ? "s" : ""}`}
             </div>
             {selEvents.length === 0 ? (
-              <div style={{ color: "#142030", fontFamily: "'DM Mono',monospace", fontSize: 11, textAlign: "center", padding: "24px 0" }}>Nothing scheduled — click a date on the calendar</div>
+              <div style={{ color: "#a8c8e0", fontFamily: "'DM Mono',monospace", fontSize: 11, textAlign: "center", padding: "24px 0" }}>Nothing scheduled — click a date on the calendar</div>
             ) : (
               selEvents.map((e) => {
-                const color = e.type === "builder" ? "#00e5c4" : "#ff8c42";
-                const statusColor = e.status === "completed" ? "#00e5c4" : e.status === "scheduled" ? "#ff8c42" : "#5a8aaa";
+                const color = e.type === "builder" ? "#009985" : "#e07030";
+                const statusColor = e.status === "completed" ? "#009985" : e.status === "scheduled" ? "#e07030" : "#1a4868";
                 return (
-                  <div key={e.id} style={{ borderLeft: `3px solid ${color}`, background: "#07101a", borderRadius: 10, padding: "12px 16px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div key={e.id} style={{ borderLeft: `3px solid ${color}`, background: "#eef6fc", borderRadius: 10, padding: "12px 16px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "#c8dce8", marginBottom: 3 }}>{e.customer}</div>
-                      <div style={{ fontSize: 11, color: "#5a8aaa" }}>{e.equipment} · {e.issue}</div>
-                      <div style={{ fontSize: 10, color: "#1e3040", fontFamily: "'DM Mono',monospace", marginTop: 4 }}>🕐 {e.time} · {e.tech}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "#0d2137", marginBottom: 3 }}>{e.customer}</div>
+                      <div style={{ fontSize: 11, color: "#1a4868" }}>{e.equipment} · {e.issue}</div>
+                      <div style={{ fontSize: 10, color: "#5a7e96", fontFamily: "'DM Mono',monospace", marginTop: 4 }}>🕐 {e.time} · {e.tech}</div>
                     </div>
                     <div style={{ textAlign: "right" }}>
                       <div style={{ fontSize: 9, color, fontFamily: "'DM Mono',monospace", marginBottom: 4 }}>{e.type === "builder" ? "🏊 Blue Haven" : "⚡ Sasser"}</div>
                       <div style={{ fontSize: 9, color: statusColor, fontFamily: "'DM Mono',monospace" }}>● {e.status}</div>
-                      {e.ticketId && <div style={{ fontSize: 8, color: "#142030", fontFamily: "'DM Mono',monospace", marginTop: 3 }}>{formatServiceNumber(e.ticketId)}</div>}
+                      {e.ticketId && <div style={{ fontSize: 8, color: "#a8c8e0", fontFamily: "'DM Mono',monospace", marginTop: 3 }}>{formatServiceNumber(e.ticketId)}</div>}
                     </div>
                   </div>
                 );
