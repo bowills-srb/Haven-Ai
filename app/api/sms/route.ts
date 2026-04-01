@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import twilio from "twilio";
 import { buildSystemPrompt, parseTicket, buildEmailContent, CalendarEvent, BUILDER_EMAIL, MANUFACTURER_EMAIL, BLUEHAVEN_CC } from "@/lib/warranty";
 import { getHistory, appendHistory, clearHistory } from "@/lib/smsStore";
 import { addEvent } from "@/lib/eventStore";
