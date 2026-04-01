@@ -443,7 +443,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [tickets, setTickets] = useState<WarrantyTicket[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(SEED_EVENTS);
-  const [tab, setTab] = useState<"tickets" | "calendar" | "customers">("customers");
+  const [tab, setTab] = useState<"tickets" | "calendar" | "customers" | "analytics">("customers");
 
   const endRef = useRef<HTMLDivElement>(null);
   const inRef = useRef<HTMLInputElement>(null);
@@ -451,6 +451,16 @@ export default function App() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msgs, busy]);
+
+  // Load persisted tickets on mount
+  useEffect(() => {
+    fetch("/api/tickets")
+      .then((r) => r.json())
+      .then((data: WarrantyTicket[]) => {
+        if (Array.isArray(data) && data.length) setTickets(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const send = async (text: string) => {
     if (!text.trim() || busy) return;
@@ -939,12 +949,13 @@ export default function App() {
                 [
                   ["tickets", `Tickets${tickets.length ? ` (${tickets.length})` : ""}`],
                   ["calendar", "Calendar"],
+                  ["analytics", "Analytics"],
                   ["customers", "Customers"],
                 ] as [string, string][]
               ).map(([id, label]) => (
                 <button
                   key={id}
-                  onClick={() => setTab(id as "tickets" | "calendar" | "customers")}
+                  onClick={() => setTab(id as "tickets" | "calendar" | "customers" | "analytics")}
                   style={{
                     background: "none",
                     border: "none",
@@ -1004,6 +1015,56 @@ export default function App() {
                 <CalendarView events={calendarEvents} />
               </div>
             )}
+
+            {/* analytics tab */}
+            {tab === "analytics" && (() => {
+              const total = tickets.length;
+              const builder = tickets.filter((t) => t.route === "builder").length;
+              const manufacturer = tickets.filter((t) => t.route === "manufacturer").length;
+              const avgDays = total ? Math.round(tickets.reduce((s, t) => s + t.daysSinceStart, 0) / total) : 0;
+              const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
+              const statCard = (label: string, val: string | number, color: string) => (
+                <div key={label} style={{ background: "#0a1520", borderRadius: 10, padding: "14px 16px", flex: 1 }}>
+                  <div style={{ fontSize: 28, fontWeight: 700, color, fontFamily: "'DM Mono',monospace" }}>{val}</div>
+                  <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginTop: 4 }}>{label}</div>
+                </div>
+              );
+              const bar = (label: string, count: number, color: string) => (
+                <div key={label} style={{ marginBottom: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontSize: 10, color: "#5a8aaa", fontFamily: "'DM Mono',monospace" }}>{label}</span>
+                    <span style={{ fontSize: 10, color, fontFamily: "'DM Mono',monospace" }}>{count} · {pct(count)}%</span>
+                  </div>
+                  <div style={{ height: 6, background: "#0a1520", borderRadius: 3, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${pct(count)}%`, background: color, borderRadius: 3, transition: "width .4s ease" }} />
+                  </div>
+                </div>
+              );
+              return (
+                <div>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                    {statCard("Total Tickets", total, "#dbe8f5")}
+                    {statCard("Avg Pool Age", total ? `${avgDays}d` : "—", "#5a8aaa")}
+                  </div>
+                  <div style={{ background: "#0a1520", borderRadius: 10, padding: "14px 16px", marginBottom: 14 }}>
+                    <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 12 }}>Routing Split</div>
+                    {bar("Builder Warranty — Blue Haven", builder, "#00e5c4")}
+                    {bar("Manufacturer — Sasser Electric", manufacturer, "#ff8c42")}
+                    {total === 0 && <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "10px 0" }}>No tickets yet</div>}
+                  </div>
+                  <div style={{ background: "#0a1520", borderRadius: 10, padding: "14px 16px" }}>
+                    <div style={{ fontSize: 9, color: "#1e3040", fontFamily: "'DM Mono',monospace", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 10 }}>Recent Tickets</div>
+                    {tickets.slice(0, 5).map((t) => (
+                      <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #0f1d29", padding: "6px 0" }}>
+                        <span style={{ fontSize: 11, color: "#c8dce8" }}>{t.customerName}</span>
+                        <span style={{ fontSize: 9, color: t.route === "builder" ? "#00e5c4" : "#ff8c42", fontFamily: "'DM Mono',monospace" }}>{t.route === "builder" ? "Builder" : "Manufacturer"}</span>
+                      </div>
+                    ))}
+                    {total === 0 && <div style={{ fontSize: 11, color: "#142030", fontFamily: "'DM Mono',monospace", textAlign: "center", padding: "10px 0" }}>No tickets yet</div>}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* customers tab */}
             {tab === "customers" && (

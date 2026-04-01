@@ -27,6 +27,15 @@ export default function CalendarPage() {
     }
   }, []);
 
+  const cycleStatus = async (id: string, current: CalendarEvent["status"]) => {
+    const next: CalendarEvent["status"] = current === "pending" ? "scheduled" : current === "scheduled" ? "completed" : "pending";
+    const res = await fetch(`/api/events/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: next }) });
+    if (res.ok) {
+      const updated: CalendarEvent = await res.json();
+      setEvents((prev) => prev.map((e) => e.id === id ? updated : e));
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
     const interval = setInterval(fetchEvents, 15000);
@@ -215,7 +224,12 @@ export default function CalendarPage() {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                     <div style={{ fontSize: 16, fontWeight: 700, color: "#c8dce8" }}>{e.customer}</div>
-                    <span style={{ fontSize: 10, color: statusColor, fontFamily: "'DM Mono',monospace", letterSpacing: ".08em" }}>{statusIcon} {e.status.toUpperCase()}</span>
+                    <button
+                      onClick={() => cycleStatus(e.id, e.status)}
+                      style={{ fontSize: 10, color: statusColor, fontFamily: "'DM Mono',monospace", letterSpacing: ".08em", background: statusColor + "18", border: `1px solid ${statusColor}40`, borderRadius: 20, padding: "3px 10px", cursor: "pointer" }}
+                    >
+                      {statusIcon} {e.status.toUpperCase()}
+                    </button>
                   </div>
                   <div style={{ fontSize: 12, color: "#5a8aaa", marginBottom: 4 }}>{e.equipment}</div>
                   <div style={{ fontSize: 13, color: "#2d4a60", marginBottom: 10, lineHeight: 1.5 }}>{e.issue}</div>

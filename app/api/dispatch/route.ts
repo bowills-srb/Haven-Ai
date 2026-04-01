@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { buildEmailContent, WarrantyTicket, CalendarEvent, BUILDER_EMAIL, MANUFACTURER_EMAIL, BLUEHAVEN_CC } from "@/lib/warranty";
 import { addEvent } from "@/lib/eventStore";
+import { saveTicket } from "@/lib/ticketStore";
 
 export const maxDuration = 30;
 
@@ -56,6 +57,7 @@ export async function POST(req: NextRequest) {
       ticketId: ticket.id,
     };
     addEvent(calEvent);
+    saveTicket(ticket);
 
     return NextResponse.json({ emailSent: true, eventCreated: true });
   } catch (err: unknown) {
