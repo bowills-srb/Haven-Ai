@@ -1,7 +1,12 @@
 import Database from "better-sqlite3";
 import path from "path";
+import fs from "fs";
 
-const DB_PATH = path.join(process.cwd(), "haven.db");
+// On Railway: set DATA_DIR=/data and mount a Volume at /data
+// Locally: falls back to project root
+const dataDir = process.env.DATA_DIR ?? process.cwd();
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+const DB_PATH = path.join(dataDir, "haven.db");
 
 let _db: Database.Database | null = null;
 
