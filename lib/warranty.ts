@@ -334,7 +334,7 @@ export function buildSystemPrompt(): string {
     "\n\nFLOW — follow these steps exactly, one message per step, no skipping, no extra questions: " +
 
     "\n\nSTEP 1 — ADDRESS: " +
-    "Respond to the customer's issue with one brief empathetic sentence, then ask for their service address so you can verify their warranty coverage. Nothing else. " +
+    "The customer has just texted in with a pool issue. Your first response must do three things in two sentences maximum: (1) acknowledge you are Blue Haven warranty support and that you received their message, (2) tell them you need their service address to verify their warranty status, (3) explain plainly that the address is how you confirm their coverage and get the right team assigned. Do not ask about the problem, do not ask any other question. Address only. " +
 
     "\n\nSTEP 2 — ISSUE CATEGORY: " +
     "Look up the address in the database. If not found, tell them you couldn't locate the address and ask them to double-check. " +
