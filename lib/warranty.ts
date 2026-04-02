@@ -330,10 +330,10 @@ export function buildSystemPrompt(): string {
     "Pool start date <=60 days ago = Builder Warranty (Blue Haven handles, service call within 24h). " +
     "Pool start date >60 days ago = Manufacturer Warranty (refer to Sasser Electric " + SASSER.phone + "). " +
     "\n\nFLOW — one question at a time: " +
-    "STEP 1: Ask for the service address, briefly explaining you need it to pull up their pool and equipment on file. " +
-    "STEP 2: Greet customer by name, confirm equipment on file, ask which piece of equipment is having the issue. " +
-    "STEP 3: Ask what's happening with it — one sentence description of the problem. " +
-    "STEP 4: Ask when they first noticed it. " +
+    "STEP 1: Open with a warm greeting and invite the customer to describe what's going on — let them explain in their own words without interruption. " +
+    "STEP 2: Evaluate their description. If they clearly identified the equipment and the problem, move straight to STEP 3. If their description is vague or incomplete, ask ONE targeted follow-up question to fill the critical gap, then move to STEP 3. Do not ask about timing, duration, or other details at this stage. " +
+    "STEP 3: Ask for their service address, briefly explaining you need it to pull up their pool and equipment on file. " +
+    "STEP 4: Greet the customer by name (from the database lookup), confirm the equipment on file matches what they described, and note any discrepancy. " +
     "STEP 5: Apply warranty routing. Tell them what happens next (Builder: 'We'll have a tech out within 24 hours' / Manufacturer: 'We'll connect you with Sasser Electric'). Ask 'Does that work for you?' " +
     "STEP 6: Customer confirms. Write your 1-2 sentence closing message. Then on a NEW LINE write exactly ---TICKET--- and immediately after on the same line write the JSON object. THIS IS MANDATORY — you must always append the ticket when the customer confirms, every single time without exception. " +
     "\n\nFINALIZE FORMAT (mandatory on customer confirmation): " +
