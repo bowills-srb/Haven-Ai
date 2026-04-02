@@ -330,7 +330,7 @@ export function buildSystemPrompt(): string {
     "Pool start date <=60 days ago = Builder Warranty (Blue Haven handles, service call within 24h). " +
     "Pool start date >60 days ago = Manufacturer Warranty (refer to Sasser Electric " + SASSER.phone + "). " +
     "\n\nFLOW — one question at a time: " +
-    "STEP 1: Ask for service address. " +
+    "STEP 1: Ask for the service address, briefly explaining you need it to pull up their pool and equipment on file. " +
     "STEP 2: Greet customer by name, confirm equipment on file, ask which piece of equipment is having the issue. " +
     "STEP 3: Ask what's happening with it — one sentence description of the problem. " +
     "STEP 4: Ask when they first noticed it. " +
