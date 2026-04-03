@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { buildEmailContent, WarrantyTicket, CalendarEvent, BUILDER_EMAIL, MANUFACTURER_EMAIL, BLUEHAVEN_CC } from "@/lib/warranty";
 import { addEvent } from "@/lib/eventStore";
 import { saveTicket } from "@/lib/ticketStore";
+import { createGoogleCalendarEvent } from "@/lib/googleCalendar";
 
 export const maxDuration = 30;
 
@@ -34,11 +35,12 @@ export async function POST(req: NextRequest) {
     };
     addEvent(calEvent);
     saveTicket(ticket);
+    const gcal = await createGoogleCalendarEvent(calEvent);
 
     const resendKey = process.env.RESEND_API_KEY;
     if (!resendKey) {
       console.warn("RESEND_API_KEY not set — ticket saved, email skipped");
-      return NextResponse.json({ emailSent: false, eventCreated: true });
+      return NextResponse.json({ emailSent: false, eventCreated: true, calendarEventCreated: gcal.success });
     }
 
     const resend = new Resend(resendKey);
@@ -54,11 +56,11 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Resend error:", JSON.stringify(error));
-      return NextResponse.json({ emailSent: false, eventCreated: true, error: error.message });
+      return NextResponse.json({ emailSent: false, eventCreated: true, calendarEventCreated: gcal.success, error: error.message });
     }
 
     console.log(`Email sent: ${ticket.id} → ${toEmail}${ccEmails.length ? ` CC ${ccEmails.join(", ")}` : ""}`);
-    return NextResponse.json({ emailSent: true, eventCreated: true });
+    return NextResponse.json({ emailSent: true, eventCreated: true, calendarEventCreated: gcal.success });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Dispatch API error:", message);
