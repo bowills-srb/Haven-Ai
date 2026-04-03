@@ -452,14 +452,21 @@ export default function App() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msgs, busy]);
 
-  // Load persisted tickets on mount
+  // Load persisted tickets and calendar events on mount
   useEffect(() => {
     fetch("/api/tickets")
       .then((r) => r.json())
       .then((data: WarrantyTicket[]) => {
         if (Array.isArray(data) && data.length) setTickets(data);
       })
-      .catch(() => {});
+      .catch((e) => console.error("Failed to load tickets:", e));
+
+    fetch("/api/events")
+      .then((r) => r.json())
+      .then((data: CalendarEvent[]) => {
+        if (Array.isArray(data) && data.length) setCalendarEvents(data);
+      })
+      .catch((e) => console.error("Failed to load events:", e));
   }, []);
 
   const send = async (text: string) => {
