@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { CalendarEvent } from "@/lib/warranty";
 import { getEvents, addEvent } from "@/lib/eventStore";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   return NextResponse.json(getEvents());
 }

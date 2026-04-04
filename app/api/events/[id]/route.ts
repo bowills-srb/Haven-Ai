@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { CalendarEvent } from "@/lib/warranty";
 import { updateEventStatus } from "@/lib/eventStore";
 
+export const dynamic = "force-dynamic";
+
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { status } = await req.json() as { status: CalendarEvent["status"] };

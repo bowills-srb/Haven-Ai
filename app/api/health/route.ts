@@ -3,6 +3,8 @@ import { getDb } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const dataDir = process.env.DATA_DIR ?? process.cwd();
   const dbPath = path.join(dataDir, "haven.db");
