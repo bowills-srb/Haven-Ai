@@ -308,22 +308,45 @@ export const SEED_EVENTS: CalendarEvent[] = [
 
 // ── Dates & prompts ───────────────────────────────────────────────────────────
 
-export function getServiceDate(): string {
+/** Returns the next N available business days starting min_days_out from today */
+export function getAvailableDates(count = 3, minDaysOut = 2): string[] {
+  const dates: string[] = [];
   const d = new Date();
-  d.setDate(d.getDate() + 2);
-  if (d.getDay() === 0) d.setDate(d.getDate() + 1);
-  if (d.getDay() === 6) d.setDate(d.getDate() + 2);
-  return d.toISOString().split("T")[0];
+  d.setDate(d.getDate() + minDaysOut);
+  while (dates.length < count) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) {
+      dates.push(d.toISOString().split("T")[0]);
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return dates;
+}
+
+/** @deprecated use getAvailableDates() */
+export function getServiceDate(): string {
+  return getAvailableDates(1)[0];
 }
 
 export function buildSystemPrompt(): string {
-  const svcDate = getServiceDate();
-  const svcDateFormatted = new Date(svcDate + "T12:00:00").toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric",
-  });
+  const availDates = getAvailableDates(3);
+
+  const fmtDateShort = (iso: string) =>
+    new Date(iso + "T12:00:00").toLocaleDateString("en-US", {
+      weekday: "long", month: "long", day: "numeric",
+    });
+
+  // Build numbered appointment menu: 3 dates × 2 time slots = 6 options
+  const apptMenu = availDates.flatMap((iso, i) => [
+    `${i * 2 + 1}. ${fmtDateShort(iso)}, 9:00 AM – 11:00 AM`,
+    `${i * 2 + 2}. ${fmtDateShort(iso)}, 1:00 PM – 3:00 PM`,
+  ]).join("\n");
 
   // Routing lookup: address → days since pool start (for silent warranty classification)
   const routingRef = POOL_DB.map((p) => `${p.address}=${p.daysAgo}d`).join("; ");
+
+  // The first available date (used as fallback in ticket if customer doesn't choose)
+  const svcDate = availDates[0];
 
   return `BLUE HAVEN POOLS — WARRANTY SERVICE AI
 
@@ -364,16 +387,17 @@ ISSUE CATEGORIES (internal tagging only — do not quiz the customer):
 EQUIPMENT | SURFACE | PLUMBING | STRUCTURAL | ELECTRICAL | WATER FEATURES | OTHER
 
 STEP 3 — SCHEDULE THE APPOINTMENT
-Offer the available windows below. Once a time is confirmed:
-- Confirm the date, time window, and job site address
+Present the numbered appointment menu below. Ask them to reply with a number 1–6.
+Once a selection is confirmed:
+- Repeat back the exact date and time window they chose
+- Confirm the job site address
 - Let them know the technician will call 30 minutes before arrival
 - Remind them: someone 18+ must be present and the equipment area should be accessible
 - Wrap up warmly and provide (850) 932-2600 if they need anything before the appointment
 
-AVAILABLE APPOINTMENTS: ${svcDateFormatted}
-1. 9:00 AM – 11:00 AM
-2. 1:00 PM – 3:00 PM
-Ask them to reply 1 or 2. If neither works, say "No problem — a team member will reach out shortly to find a time that works for you" and still emit the ticket.
+AVAILABLE APPOINTMENTS (present all 6 options, ask them to reply with a number):
+${apptMenu}
+If none work, say "No problem — a team member will reach out shortly to find a time that works for you" and still emit the ticket using the first available date.
 
 ================================================================================
 CUSTOMER DATABASE — ACTIVE CONTRACTS
@@ -491,12 +515,13 @@ DISPATCH TICKET (mandatory on appointment confirmation)
 After confirming the appointment, on a NEW LINE write exactly ---TICKET--- immediately followed by the JSON object on the same line. Do this every time without exception.
 
 Format: Confirmation sentence here.
----TICKET---{"route":"builder","customerName":"...","customerAddress":"...","customerPhone":"...","equipment":"...","brand":"Blue Haven","issueDescription":"...","daysSinceStart":0,"startDate":"...","techAssigned":"...","techPhone":"...","warrantyType":"...","serviceDate":"${svcDate}"}
+---TICKET---{"route":"builder","customerName":"...","customerAddress":"...","customerPhone":"...","equipment":"...","brand":"Blue Haven","issueDescription":"...","daysSinceStart":0,"startDate":"...","techAssigned":"...","techPhone":"...","warrantyType":"...","serviceDate":"YYYY-MM-DD","serviceTime":"H:MM AM – H:MM AM"}
 
 Builder route: techAssigned="Blue Haven Service Team", techPhone="(850) 250-0100"
 Manufacturer route: techAssigned="Sasser Electric", techPhone="${SASSER.phone}"
 issueDescription: use whatever the customer said, even if vague — never leave blank
-serviceDate: ${svcDate}
+serviceDate: use the YYYY-MM-DD of the appointment the customer confirmed; if no preference given, use ${svcDate}
+serviceTime: the exact time window the customer selected (e.g. "9:00 AM – 11:00 AM" or "1:00 PM – 3:00 PM")
 One line, append once only, never repeat.`;
 }
 
@@ -518,6 +543,7 @@ export interface WarrantyTicket {
   techPhone: string;
   warrantyType: string;
   serviceDate: string;
+  serviceTime?: string;
   dispatching?: boolean;
   actionStatus?: { emailSent: boolean; eventCreated: boolean; error?: string };
 }

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       equipment: ticket.equipment,
       issue: ticket.issueDescription,
       type: ticket.route,
-      time: "9:00 AM – 11:00 AM",
+      time: ticket.serviceTime ?? "9:00 AM – 11:00 AM",
       tech: ticket.techAssigned,
       status: "pending",
       ticketId: ticket.id,
