@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildPMSystemPrompt } from "@/lib/pm-server";
 import { getPhases } from "@/lib/jobStore";
+import { getNotes } from "@/lib/notesStore";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export async function POST(req: NextRequest) {
     }
 
     const phases = getPhases();
-    const systemPrompt = buildPMSystemPrompt(phases);
+    const notes = getNotes();
+    const systemPrompt = buildPMSystemPrompt(phases, notes);
 
     const client = new Anthropic({ apiKey });
     const response = await client.messages.create({

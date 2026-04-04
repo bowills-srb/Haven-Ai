@@ -9,11 +9,40 @@ interface ChatMessage {
   id: number | string;
   role: "user" | "assistant";
   text: string;
+  saved?: boolean; // true if this message triggered a memory save
 }
 
 interface ApiMessage {
   role: "user" | "assistant";
   content: string;
+}
+
+interface PMNote {
+  id: string;
+  jobId: string;
+  fact: string;
+  category: string;
+  createdAt: string;
+}
+
+// ── Memory parser (mirrors parseTicket pattern) ────────────────────────────────
+
+function parseMemory(text: string): { clean: string; note: Omit<PMNote, "id" | "createdAt"> | null } {
+  if (!text.includes("---MEMORY---")) return { clean: text, note: null };
+  const [clean, rest] = text.split("---MEMORY---");
+  try {
+    const start = rest.indexOf("{");
+    const end = rest.lastIndexOf("}");
+    if (start === -1 || end === -1) return { clean: clean.trim(), note: null };
+    const data = JSON.parse(rest.slice(start, end + 1));
+    if (!data.fact) return { clean: clean.trim(), note: null };
+    return {
+      clean: clean.trim(),
+      note: { jobId: data.jobId || "general", fact: data.fact, category: data.category || "note" },
+    };
+  } catch {
+    return { clean: clean.trim(), note: null };
+  }
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -211,7 +240,8 @@ function PMBubble({ msg }: { msg: ChatMessage }) {
   return (
     <div style={{
       display: "flex",
-      justifyContent: isUser ? "flex-end" : "flex-start",
+      flexDirection: "column",
+      alignItems: isUser ? "flex-end" : "flex-start",
       marginBottom: 10,
       paddingLeft: isUser ? 60 : 0,
       paddingRight: isUser ? 0 : 60,
@@ -230,6 +260,11 @@ function PMBubble({ msg }: { msg: ChatMessage }) {
       }}>
         {msg.text}
       </div>
+      {msg.saved && (
+        <div style={{ fontSize: 9, color: "#009985", fontFamily: "'DM Mono', monospace", marginTop: 3, letterSpacing: ".06em" }}>
+          💾 saved to field log
+        </div>
+      )}
     </div>
   );
 }
@@ -246,10 +281,12 @@ export default function ConstructionPage() {
   const [hist, setHist] = useState<ApiMessage[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [notes, setNotes] = useState<PMNote[]>([]);
+  const [savedToast, setSavedToast] = useState<string | null>(null); // shows briefly after save
   const endRef = useRef<HTMLDivElement>(null);
   const inRef = useRef<HTMLInputElement>(null);
 
-  // Load phases from API on mount
+  // Load phases and notes from API on mount
   useEffect(() => {
     fetch("/api/jobs")
       .then((r) => r.json())
@@ -257,6 +294,13 @@ export default function ConstructionPage() {
         if (data && typeof data === "object" && !data.error) setPhases(data);
       })
       .catch((e) => console.error("Failed to load phases:", e));
+
+    fetch("/api/pm-notes")
+      .then((r) => r.json())
+      .then((data: PMNote[]) => {
+        if (Array.isArray(data)) setNotes(data);
+      })
+      .catch((e) => console.error("Failed to load notes:", e));
   }, []);
 
   useEffect(() => {
@@ -292,9 +336,33 @@ export default function ConstructionPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "API error");
-      const responseText: string = data.text || "No response.";
-      setMsgs((p) => [...p, { id: Date.now() + 1, role: "assistant", text: responseText }]);
-      setHist([...newHist, { role: "assistant", content: responseText }]);
+      const rawText: string = data.text || "No response.";
+
+      // Parse and strip memory delimiter
+      const { clean, note } = parseMemory(rawText);
+      let saved = false;
+
+      if (note) {
+        try {
+          const saveRes = await fetch("/api/pm-notes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(note),
+          });
+          const saved_note: { ok: boolean; note: PMNote } = await saveRes.json();
+          if (saved_note.ok) {
+            setNotes((prev) => [saved_note.note, ...prev]);
+            setSavedToast(note.fact);
+            setTimeout(() => setSavedToast(null), 4000);
+            saved = true;
+          }
+        } catch (e) {
+          console.error("Failed to save memory note:", e);
+        }
+      }
+
+      setMsgs((p) => [...p, { id: Date.now() + 1, role: "assistant", text: clean, saved }]);
+      setHist([...newHist, { role: "assistant", content: clean }]);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Unknown error";
       setMsgs((p) => [...p, { id: Date.now() + 1, role: "assistant", text: "⚠ " + msg }]);
@@ -458,29 +526,66 @@ export default function ConstructionPage() {
               </div>
             </div>
 
-            {/* quick prompts sidebar */}
-            <div style={{ width: 200, flexShrink: 0 }}>
-              <div style={{ fontSize: 9, fontFamily: "'DM Mono', monospace", color: "#a8c8e0", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>Quick asks</div>
-              {[
-                "What's the priority today?",
-                "Which jobs have blockers?",
-                "What needs to be ordered now?",
-                "Any pending customer decisions?",
-                "What's next on Davis?",
-                "What's next on Boak?",
-                "Which jobs are furthest along?",
-                "What are the tight-access jobs?",
-              ].map((q) => (
-                <button
-                  key={q}
-                  onClick={() => { setTab("chat"); send(q); }}
-                  style={{ display: "block", width: "100%", textAlign: "left", background: "#fff", border: "1px solid #c4dcf0", borderRadius: 8, padding: "8px 10px", marginBottom: 6, fontSize: 11, color: "#1a4868", fontFamily: "-apple-system, sans-serif", cursor: "pointer", lineHeight: 1.4, transition: "background .1s" }}
-                  onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#f0f6fc")}
-                  onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#fff")}
-                >
-                  {q}
-                </button>
-              ))}
+            {/* quick prompts + field log sidebar */}
+            <div style={{ width: 220, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16 }}>
+
+              {/* quick asks */}
+              <div>
+                <div style={{ fontSize: 9, fontFamily: "'DM Mono', monospace", color: "#a8c8e0", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>Quick asks</div>
+                {[
+                  "What's the priority today?",
+                  "Which jobs have blockers?",
+                  "What needs to be ordered now?",
+                  "Any pending customer decisions?",
+                  "What's next on Davis?",
+                  "What's next on Boak?",
+                  "Which jobs are furthest along?",
+                  "What are the tight-access jobs?",
+                ].map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => { setTab("chat"); send(q); }}
+                    style={{ display: "block", width: "100%", textAlign: "left", background: "#fff", border: "1px solid #c4dcf0", borderRadius: 8, padding: "8px 10px", marginBottom: 6, fontSize: 11, color: "#1a4868", fontFamily: "-apple-system, sans-serif", cursor: "pointer", lineHeight: 1.4, transition: "background .1s" }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#f0f6fc")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#fff")}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+
+              {/* saved toast */}
+              {savedToast && (
+                <div style={{ background: "#e8fdf5", border: "1px solid #00998540", borderRadius: 8, padding: "8px 10px", animation: "pop .2s ease" }}>
+                  <div style={{ fontSize: 9, fontFamily: "'DM Mono', monospace", color: "#009985", letterSpacing: ".1em", marginBottom: 3 }}>💾 SAVED TO FIELD LOG</div>
+                  <div style={{ fontSize: 11, color: "#006650", lineHeight: 1.4 }}>{savedToast}</div>
+                </div>
+              )}
+
+              {/* field log */}
+              <div>
+                <div style={{ fontSize: 9, fontFamily: "'DM Mono', monospace", color: "#a8c8e0", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>
+                  Field Log {notes.length > 0 && <span style={{ color: "#009985" }}>({notes.length})</span>}
+                </div>
+                {notes.length === 0 ? (
+                  <div style={{ fontSize: 10, color: "#c4dcf0", fontFamily: "'DM Mono', monospace", lineHeight: 1.6 }}>
+                    No updates yet. Tell me a fact — &quot;Boak sqft confirmed at 750&quot; — and it will persist here.
+                  </div>
+                ) : (
+                  notes.slice(0, 8).map((n) => {
+                    const ts = new Date(n.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                    const jobLabel = n.jobId === "general" ? "General" : PM_JOBS.find((j) => j.id === n.jobId)?.name.split(" ")[1] ?? n.jobId;
+                    return (
+                      <div key={n.id} style={{ background: "#fff", border: "1px solid #e8f4fb", borderLeft: "3px solid #009985", borderRadius: 6, padding: "6px 9px", marginBottom: 6 }}>
+                        <div style={{ fontSize: 9, fontFamily: "'DM Mono', monospace", color: "#a8c8e0", marginBottom: 2 }}>
+                          {ts} · {jobLabel}
+                        </div>
+                        <div style={{ fontSize: 11, color: "#1a4868", lineHeight: 1.4 }}>{n.fact}</div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </div>
         )}
