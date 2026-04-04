@@ -625,26 +625,17 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: "#009985",
-                animation: "blink 2s ease infinite",
-              }}
-            />
-            <span
-              style={{
-                fontSize: 10,
-                color: "#009985",
-                fontFamily: "'DM Mono',monospace",
-                letterSpacing: ".1em",
-              }}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <a
+              href="/construction"
+              style={{ fontSize: 10, fontFamily: "'DM Mono',monospace", color: "#5a7e96", textDecoration: "none", letterSpacing: ".1em", border: "1px solid #1a3a55", borderRadius: 6, padding: "5px 12px", transition: "color .1s" }}
             >
-              LIVE
-            </span>
+              CONSTRUCTION PM →
+            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#009985", animation: "blink 2s ease infinite" }} />
+              <span style={{ fontSize: 10, color: "#009985", fontFamily: "'DM Mono',monospace", letterSpacing: ".1em" }}>LIVE</span>
+            </div>
           </div>
         </div>
 
